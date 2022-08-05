@@ -11,23 +11,21 @@ import 'package:mighty_plug_manager/bluetooth/devices/presets/presetsStorage.dar
 import 'package:mighty_plug_manager/midi/MidiControllerManager.dart';
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+
+import 'UI/pages/drumEditor.dart';
+import 'UI/pages/jamTracks.dart';
+//pages
+import 'UI/pages/presetEditor.dart';
+import 'UI/pages/settings.dart';
 import 'UI/popups/alertDialogs.dart';
+import 'UI/theme.dart';
 import 'UI/widgets/NuxAppBar.dart' as NuxAppBar;
 import 'UI/widgets/VolumeDrawer.dart';
+import 'UI/widgets/bottomBar.dart';
 import 'UI/widgets/nestedWillPopScope.dart';
 import 'UI/widgets/presets/presetList.dart';
 import 'bluetooth/NuxDeviceControl.dart';
 import 'bluetooth/bleMidiHandler.dart';
-
-import 'UI/widgets/bottomBar.dart';
-import 'UI/theme.dart';
-
-//pages
-import 'UI/pages/presetEditor.dart';
-import 'UI/pages/drumEditor.dart';
-import 'UI/pages/jamTracks.dart';
-import 'UI/pages/settings.dart';
-
 //recreate this file with your own api keys
 import 'configKeys.dart';
 
@@ -108,22 +106,22 @@ class _AppState extends State<App> {
     return MaterialApp(
       title: 'Mightier Amp',
       theme: getTheme(),
-      home: MainTabs(),
+      home: HomePage(),
       navigatorKey: navigatorKey,
     );
   }
 }
 
-class MainTabs extends StatefulWidget {
+class HomePage extends StatefulWidget {
   final BLEMidiHandler handler = BLEMidiHandler();
   final MidiControllerManager midiMan = MidiControllerManager();
 
-  MainTabs();
+  HomePage({Key? key}) : super(key: key);
   @override
-  _MainTabsState createState() => _MainTabsState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MainTabsState extends State<MainTabs> with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _currentIndex = 0;
   late BuildContext dialogContext;
   late TabController controller;
@@ -151,8 +149,7 @@ class _MainTabsState extends State<MainTabs> with TickerProviderStateMixin {
     super.initState();
 
     //add 5 pages widgets
-    _children.addAll(
-        [PresetEditor(), PresetList(), DrumEditor(), JamTracks(), Settings()]);
+    _children.addAll([PresetEditor(), PresetList(), DrumEditor(), JamTracks(), Settings()]);
 
     controller = TabController(initialIndex: 0, length: 5, vsync: this);
 
@@ -218,8 +215,7 @@ class _MainTabsState extends State<MainTabs> with TickerProviderStateMixin {
           barrierDismissible: false,
           builder: (BuildContext context) {
             dialogContext = context;
-            return StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
+            return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
               dialogSetState = setState;
               return NestedWillPopScope(
                 onWillPop: () => Future.value(false),
@@ -240,9 +236,7 @@ class _MainTabsState extends State<MainTabs> with TickerProviderStateMixin {
                         const SizedBox(
                           width: 8,
                         ),
-                        Text(connectionFailed
-                            ? "Connection Failed!"
-                            : "Connecting"),
+                        Text(connectionFailed ? "Connection Failed!" : "Connecting"),
                       ],
                     ),
                   ),
