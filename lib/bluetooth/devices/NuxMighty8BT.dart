@@ -2,15 +2,15 @@
 // This code is licensed under MIT license (see LICENSE.md for details)
 
 import 'package:flutter/material.dart';
-import '../../UI/mightierIcons.dart';
+
+import '../../UI/mightier_icons.dart';
+import '../NuxDeviceControl.dart';
 import 'NuxConstants.dart';
+import 'NuxDevice.dart';
 import 'communication/communication.dart';
 import 'communication/liteCommunication.dart';
-import 'presets/Mighty8BTPreset.dart';
-
-import '../NuxDeviceControl.dart';
-import 'NuxDevice.dart';
 import 'effects/Processor.dart';
+import 'presets/Mighty8BTPreset.dart';
 import 'presets/Preset.dart';
 
 enum M8BTChannel { Clean, Overdrive, Distortion }

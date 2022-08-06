@@ -1,13 +1,15 @@
 // (c) 2020-2021 Dian Iliev (Tuntorius)
 // This code is licensed under MIT license (see LICENSE.md for details)
 
-import 'package:flutter/material.dart';
-import '../../bluetooth/devices/NuxDevice.dart';
-import '../../bluetooth/NuxDeviceControl.dart';
-import '../../bluetooth/devices/utilities/DelayTapTimer.dart';
-import '../widgets/thickSlider.dart';
-import '../widgets/scrollPicker.dart';
 import 'dart:math' as Math;
+
+import 'package:flutter/material.dart';
+
+import '../../bluetooth/NuxDeviceControl.dart';
+import '../../bluetooth/devices/NuxDevice.dart';
+import '../../bluetooth/devices/utilities/DelayTapTimer.dart';
+import '../widgets/scrollPicker.dart';
+import '../widgets/thickSlider.dart';
 
 class DrumEditor extends StatefulWidget {
   DrumEditor();
@@ -17,7 +19,7 @@ class DrumEditor extends StatefulWidget {
 
 class _DrumEditorState extends State<DrumEditor> {
   int selectedDrumPattern = 0;
-  //final NuxDevice device = NuxDeviceControl().device;
+  //final NuxDevice device = NuxDeviceControl.instance().device;
   DelayTapTimer timer = DelayTapTimer();
 
   bool remoteDrumStyleChange = false;
@@ -25,13 +27,13 @@ class _DrumEditorState extends State<DrumEditor> {
   @override
   void initState() {
     super.initState();
-    NuxDeviceControl().addListener(onDeviceChanged);
+    NuxDeviceControl.instance().addListener(onDeviceChanged);
   }
 
   @override
   void dispose() {
     super.dispose();
-    NuxDeviceControl().removeListener(onDeviceChanged);
+    NuxDeviceControl.instance().removeListener(onDeviceChanged);
   }
 
   void onDeviceChanged() {
@@ -43,7 +45,7 @@ class _DrumEditorState extends State<DrumEditor> {
   Widget build(BuildContext context) {
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
-    NuxDevice? device = NuxDeviceControl().device;
+    NuxDevice? device = NuxDeviceControl.instance().device;
     final ThemeData theme = Theme.of(context);
 
     selectedDrumPattern = device.selectedDrumStyle;

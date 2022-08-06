@@ -5,6 +5,7 @@ import 'package:mighty_plug_manager/UI/theme.dart';
 import 'package:mighty_plug_manager/UI/widgets/nestedWillPopScope.dart';
 import 'package:mighty_plug_manager/audio/automationController.dart';
 import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
+
 import 'models/setlist.dart';
 import 'trackdata/trackData.dart';
 import 'widgets/setlistPlayer.dart';
@@ -322,7 +323,7 @@ class _SetlistPageState extends State<SetlistPage> {
           return Future.value(false);
         }
 
-        NuxDeviceControl().resetToChannelDefaults();
+        NuxDeviceControl.instance().resetToChannelDefaults();
         return Future.value(true);
       },
       child: Scaffold(

@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:mighty_plug_manager/audio/models/trackAutomation.dart';
 import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
+
 import 'models/jamTrack.dart';
 
 class AutomationController {
@@ -79,7 +80,7 @@ class AutomationController {
     var source = ProgressiveAudioSource(Uri.parse(path));
     await player.setAudioSource(source);
 
-    if (NuxDeviceControl().isConnected)
+    if (NuxDeviceControl.instance().isConnected)
       _latency = SharedPrefs().getInt(SettingsKeys.latency, 0);
     else
       _latency = 0;
@@ -158,7 +159,7 @@ class AutomationController {
   }
 
   void executeEvent(AutomationEvent event) {
-    var device = NuxDeviceControl().device;
+    var device = NuxDeviceControl.instance().device;
 
     switch (event.type) {
       case AutomationEventType.preset:

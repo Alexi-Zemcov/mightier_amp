@@ -4,9 +4,10 @@
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/popups/alertDialogs.dart';
 import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
+
+import '../../bluetooth/devices/NuxDevice.dart';
 import '../popups/savePreset.dart';
 import '../widgets/presets/channelSelector.dart';
-import '../../bluetooth/devices/NuxDevice.dart';
 
 class PresetEditor extends StatefulWidget {
   PresetEditor();
@@ -20,21 +21,21 @@ class _PresetEditorState extends State<PresetEditor> {
   @override
   void initState() {
     super.initState();
-    device = NuxDeviceControl().device;
+    device = NuxDeviceControl.instance().device;
     device.addListener(onDeviceDataChanged);
-    NuxDeviceControl().addListener(onDeviceChanged);
+    NuxDeviceControl.instance().addListener(onDeviceChanged);
   }
 
   @override
   void dispose() {
     super.dispose();
     device.removeListener(onDeviceDataChanged);
-    NuxDeviceControl().removeListener(onDeviceChanged);
+    NuxDeviceControl.instance().removeListener(onDeviceChanged);
   }
 
   void onDeviceChanged() {
     device.removeListener(onDeviceDataChanged);
-    device = NuxDeviceControl().device;
+    device = NuxDeviceControl.instance().device;
     device.addListener(onDeviceDataChanged);
     setState(() {});
   }
@@ -85,9 +86,9 @@ class _PresetEditorState extends State<PresetEditor> {
               Row(
                 children: [
                   MaterialButton(
-                    onPressed: NuxDeviceControl().changes.canUndo
+                    onPressed: NuxDeviceControl.instance().changes.canUndo
                         ? () {
-                            var changes = NuxDeviceControl().changes;
+                            var changes = NuxDeviceControl.instance().changes;
                             if (changes.canUndo) changes.undo();
                             setState(() {});
                           }
@@ -97,9 +98,9 @@ class _PresetEditorState extends State<PresetEditor> {
                     //padding: EdgeInsets.zero,
                   ),
                   MaterialButton(
-                    onPressed: NuxDeviceControl().changes.canRedo
+                    onPressed: NuxDeviceControl.instance().changes.canRedo
                         ? () {
-                            var changes = NuxDeviceControl().changes;
+                            var changes = NuxDeviceControl.instance().changes;
                             if (changes.canRedo) changes.redo();
                             setState(() {});
                           }
@@ -119,17 +120,17 @@ class _PresetEditorState extends State<PresetEditor> {
                         minHeight: 45,
                         maxHeight: 45),
                     children: [Icon(Icons.compare)],
-                    isSelected: [!NuxDeviceControl().changes.canUndo],
+                    isSelected: [!NuxDeviceControl.instance().changes.canUndo],
                     selectedBorderColor: Colors.transparent,
                     borderColor: Colors.blue,
                     borderRadius: BorderRadius.circular(3),
                     color: Colors.white,
                     fillColor: Colors.blue,
                     disabledColor: Colors.grey,
-                    onPressed: NuxDeviceControl().changes.canUndo ||
-                            NuxDeviceControl().changes.canRedo
+                    onPressed: NuxDeviceControl.instance().changes.canUndo ||
+                            NuxDeviceControl.instance().changes.canRedo
                         ? (val) {
-                            var changes = NuxDeviceControl().changes;
+                            var changes = NuxDeviceControl.instance().changes;
                             if (changes.canUndo) {
                               //we can go back (that's bad though)
                               while (changes.canUndo) changes.undo();

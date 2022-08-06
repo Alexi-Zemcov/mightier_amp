@@ -1,62 +1,64 @@
 // (c) 2020-2021 Dian Iliev (Tuntorius)
 // This code is licensed under MIT license (see LICENSE.md for details)
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/pages/UsbSettings.dart';
 import 'package:mighty_plug_manager/UI/popups/alertDialogs.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:wakelock/wakelock.dart';
+
 import '../../bluetooth/NuxDeviceControl.dart';
+import '../../bluetooth/bleMidiHandler.dart';
 import '../../bluetooth/devices/NuxDevice.dart';
 import '../../platform/simpleSharedPrefs.dart';
-import 'package:wakelock/wakelock.dart';
-import '../../bluetooth/bleMidiHandler.dart';
 import '../widgets/deviceList.dart';
 import 'DebugConsolePage.dart';
 import 'calibration.dart';
-import 'package:flutter/foundation.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-
 import 'developerPage.dart';
 import 'midiControllers.dart';
 
 enum TimeUnit { BPM, Seconds }
 
+const _eqOptions = [
+  "Normal",
+  "Acoustic",
+  "Blues",
+  "Clean Bass",
+  "Guitar Cut",
+  "Metal",
+  "Pop",
+  "Rock",
+  "Solo Cut"
+];
+
+const _timeUnit = ["BPM", "Seconds"];
+
 class Settings extends StatefulWidget {
   static bool devMode = false;
   static String output = "";
+
+  const Settings({Key? key}) : super(key: key);
+
   static void print(String value) {
     if (output.isNotEmpty) output += "\n";
     output += value;
   }
 
   @override
-  _SettingsState createState() => _SettingsState();
+  State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
-  BLEMidiHandler midiHandler = BLEMidiHandler();
-
-  final eqOptions = [
-    "Normal",
-    "Acoustic",
-    "Blues",
-    "Clean Bass",
-    "Guitar Cut",
-    "Metal",
-    "Pop",
-    "Rock",
-    "Solo Cut"
-  ];
-
-  final timeUnit = ["BPM", "Seconds"];
-
+  late final BLEMidiHandler midiHandler;
   String _version = "";
-
   int devCounter = 0;
 
   @override
   void initState() {
     super.initState();
-    NuxDeviceControl().addListener(_deviceChanged);
+    NuxDeviceControl.instance().addListener(_deviceChanged);
+    midiHandler = BLEMidiHandler.instance();
 
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
@@ -67,8 +69,8 @@ class _SettingsState extends State<Settings> {
 
   @override
   void dispose() {
+    NuxDeviceControl.instance().removeListener(_deviceChanged);
     super.dispose();
-    NuxDeviceControl().removeListener(_deviceChanged);
   }
 
   void _deviceChanged() {
@@ -77,12 +79,12 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    final NuxDevice device = NuxDeviceControl().device;
+    final NuxDevice device = NuxDeviceControl.instance().device;
     List<String> items = Settings.output.split('\n');
     return ListView(
       children: [
         if (kDebugMode)
-          Container(
+          SizedBox(
             height: 150,
             child: ListView.builder(
               itemBuilder: (context, index) {
@@ -96,7 +98,7 @@ class _SettingsState extends State<Settings> {
           child: Column(
             children: [
               SwitchListTile(
-                title: Text("Keep Screen On"),
+                title: const Text("Keep Screen On"),
                 value:
                     SharedPrefs().getValue(SettingsKeys.screenAlwaysOn, false),
                 onChanged: (val) {
@@ -107,10 +109,10 @@ class _SettingsState extends State<Settings> {
                 },
               ),
               ListTile(
-                title: Text("Delay Time Unit"),
-                subtitle: Text(timeUnit[SharedPrefs()
+                title: const Text("Delay Time Unit"),
+                subtitle: Text(_timeUnit[SharedPrefs()
                     .getValue(SettingsKeys.timeUnit, TimeUnit.BPM.index)]),
-                trailing: Icon(Icons.keyboard_arrow_right),
+                trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: () {
                   var dialog = AlertDialogs.showOptionDialog(context,
                       confirmButton: "OK",
@@ -119,7 +121,7 @@ class _SettingsState extends State<Settings> {
                       confirmColor: Colors.blue,
                       value: SharedPrefs()
                           .getValue(SettingsKeys.timeUnit, TimeUnit.BPM.index),
-                      options: timeUnit, onConfirm: (changed, newValue) {
+                      options: _timeUnit, onConfirm: (changed, newValue) {
                     if (changed) {
                       setState(() {
                         SharedPrefs().setValue(SettingsKeys.timeUnit, newValue);
@@ -134,20 +136,20 @@ class _SettingsState extends State<Settings> {
               ),
               ListTile(
                 enabled: !device.deviceControl.isConnected,
-                title: Text("Device"),
+                title: const Text("Device"),
                 subtitle: Text(device.productName),
-                trailing: Icon(Icons.keyboard_arrow_right),
+                trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: () {
                   var dialog = AlertDialogs.showOptionDialog(context,
                       confirmButton: "OK",
                       cancelButton: "Cancel",
                       title: "Select Device",
                       confirmColor: Colors.blue,
-                      value: NuxDeviceControl().deviceIndex,
-                      options: NuxDeviceControl().deviceNameList,
+                      value: NuxDeviceControl.instance().deviceIndex,
+                      options: NuxDeviceControl.instance().deviceNameList,
                       onConfirm: (changed, newValue) {
                     if (changed) {
-                      NuxDeviceControl().deviceIndex = newValue;
+                      NuxDeviceControl.instance().deviceIndex = newValue;
                       setState(() {});
                     }
                   });
@@ -160,21 +162,23 @@ class _SettingsState extends State<Settings> {
               if (device.getAvailableVersions() > 1)
                 ListTile(
                   enabled: !device.deviceControl.isConnected,
-                  title: Text("Firmware Version"),
+                  title: const Text("Firmware Version"),
                   subtitle:
                       Text(device.getProductNameVersion(device.productVersion)),
-                  trailing: Icon(Icons.keyboard_arrow_right),
+                  trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: () {
                     var dialog = AlertDialogs.showOptionDialog(context,
                         confirmButton: "OK",
                         cancelButton: "Cancel",
                         title: "Select Version",
                         confirmColor: Colors.blue,
-                        value: NuxDeviceControl().deviceFirmwareVersion,
-                        options: NuxDeviceControl().deviceVersionsList,
+                        value:
+                            NuxDeviceControl.instance().deviceFirmwareVersion,
+                        options: NuxDeviceControl.instance().deviceVersionsList,
                         onConfirm: (changed, newValue) {
                       if (changed) {
-                        NuxDeviceControl().deviceFirmwareVersion = newValue;
+                        NuxDeviceControl.instance().deviceFirmwareVersion =
+                            newValue;
                         setState(() {});
                       }
                     });
@@ -186,7 +190,7 @@ class _SettingsState extends State<Settings> {
                 ),
               //Automatically set matching cabinet when changing an amp
               CheckboxListTile(
-                  title: Text("Set matching cabinets automatically"),
+                  title: const Text("Set matching cabinets automatically"),
                   value: SharedPrefs().getInt(SettingsKeys.changeCabs, 1) != 0,
                   onChanged: (value) {
                     setState(() {
@@ -195,12 +199,12 @@ class _SettingsState extends State<Settings> {
                             .setInt(SettingsKeys.changeCabs, value ? 1 : 0);
                     });
                   }),
-              Divider(),
+              const Divider(),
               if (device.advancedSettingsSupport)
                 ListTile(
                   enabled: device.deviceControl.isConnected,
-                  title: Text("USB Audio Settings"),
-                  trailing: Icon(Icons.keyboard_arrow_right),
+                  title: const Text("USB Audio Settings"),
+                  trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: () {
                     //if (midiHandler.connectedDevice != null) {
                     Navigator.of(context).push(
@@ -212,9 +216,9 @@ class _SettingsState extends State<Settings> {
               if (device.advancedSettingsSupport)
                 ListTile(
                   enabled: device.deviceControl.isConnected,
-                  title: Text("Bluetooth Audio EQ"),
-                  subtitle: Text(eqOptions[device.btEq]),
-                  trailing: Icon(Icons.keyboard_arrow_right),
+                  title: const Text("Bluetooth Audio EQ"),
+                  subtitle: Text(_eqOptions[device.btEq]),
+                  trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: () {
                     var dialog = AlertDialogs.showOptionDialog(context,
                         confirmButton: "OK",
@@ -222,7 +226,7 @@ class _SettingsState extends State<Settings> {
                         title: "Bluetooth Audio EQ",
                         confirmColor: Colors.blue,
                         value: device.btEq,
-                        options: eqOptions, onConfirm: (changed, newValue) {
+                        options: _eqOptions, onConfirm: (changed, newValue) {
                       if (changed) {
                         setState(() {
                           device.setBtEq(newValue);
@@ -239,7 +243,7 @@ class _SettingsState extends State<Settings> {
               if (device.advancedSettingsSupport)
                 ListTile(
                   enabled: device.deviceControl.isConnected,
-                  title: Text("Reset Device Presets"),
+                  title: const Text("Reset Device Presets"),
                   onTap: () {
                     if (midiHandler.connectedDevice != null) {
                       AlertDialogs.showConfirmDialog(context,
@@ -256,7 +260,7 @@ class _SettingsState extends State<Settings> {
               //Divider(),
               if (device.advancedSettingsSupport)
                 SwitchListTile(
-                    title: Text("Eco Mode"),
+                    title: const Text("Eco Mode"),
                     value: device.ecoMode,
                     onChanged: device.deviceControl.isConnected
                         ? (val) {
@@ -270,21 +274,21 @@ class _SettingsState extends State<Settings> {
               //Divider(),
               ListTile(
                 enabled: device.deviceControl.isConnected,
-                title: Text("Calibrate BT Audio Latency"),
-                trailing: Icon(Icons.keyboard_arrow_right),
+                title: const Text("Calibrate BT Audio Latency"),
+                trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: () {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => Calibration()));
                 },
               ),
               ListTile(
-                title: Text("Remote Control"),
-                subtitle: Text("Uses HID/MIDI device to control the amp"),
-                trailing: Icon(Icons.arrow_right),
+                title: const Text("Remote Control"),
+                subtitle: const Text("Uses HID/MIDI device to control the amp"),
+                trailing: const Icon(Icons.arrow_right),
                 onTap: () {
                   //if (midiHandler.connectedDevice != null) {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => MidiControllers()));
+                      builder: (context) => const MidiControllers()));
                   //}
                 },
               ),
@@ -299,12 +303,12 @@ class _SettingsState extends State<Settings> {
                     builder: (BuildContext context, snapshot) {
                       var btOn = midiHandler.bluetoothOn;
                       if (!btOn) {
-                        return ListTile(
-                          title: Text("Please, turn bluetooth on!"),
+                        return const ListTile(
+                          title: const Text("Please, turn bluetooth on!"),
                         );
                       }
                       bool scanning = midiHandler.isScanning;
-                      bool connected = NuxDeviceControl().isConnected;
+                      bool connected = NuxDeviceControl.instance().isConnected;
 
                       return Column(
                         children: [
@@ -321,7 +325,7 @@ class _SettingsState extends State<Settings> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               ElevatedButton(
-                                child: Text("Scan"),
+                                child: const Text("Scan"),
                                 onPressed: connected || scanning
                                     ? null
                                     : () {
@@ -329,7 +333,7 @@ class _SettingsState extends State<Settings> {
                                       },
                               ),
                               ElevatedButton(
-                                child: Text("Stop Scanning"),
+                                child: const Text("Stop Scanning"),
                                 onPressed: connected || !scanning
                                     ? null
                                     : () {
@@ -337,7 +341,7 @@ class _SettingsState extends State<Settings> {
                                       },
                               ),
                               ElevatedButton(
-                                child: Text("Disconnect"),
+                                child: const Text("Disconnect"),
                                 onPressed: !connected
                                     ? null
                                     : () {
@@ -355,20 +359,20 @@ class _SettingsState extends State<Settings> {
 
         if (!midiHandler.permissionGranted)
           ListTile(
-            title: Text(
+            title: const Text(
               "Please, grant location permission",
               style: TextStyle(color: Colors.orange),
             ),
             onTap: () async {
               AlertDialogs.showLocationPrompt(context, true, () async {
-                await Future.delayed(Duration(milliseconds: 1000));
+                await Future.delayed(const Duration(milliseconds: 1000));
                 setState(() {});
               });
             },
           ),
-        Divider(),
+        const Divider(),
         ListTile(
-          title: Text("App Version"),
+          title: const Text("App Version"),
           trailing: Text(_version),
           onTap: () {
             devCounter++;
@@ -380,16 +384,16 @@ class _SettingsState extends State<Settings> {
         ),
         if (Settings.devMode)
           ListTile(
-              title: Text("Debug Console"),
-              trailing: Icon(Icons.keyboard_arrow_right),
+              title: const Text("Debug Console"),
+              trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => DebugConsole()));
               }),
         if (Settings.devMode)
           ListTile(
-              title: Text("MIDI Commands Utility"),
-              trailing: Icon(Icons.keyboard_arrow_right),
+              title: const Text("MIDI Commands Utility"),
+              trailing: const Icon(Icons.keyboard_arrow_right),
               onTap: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => DeveloperPage()));

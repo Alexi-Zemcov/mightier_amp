@@ -1,26 +1,23 @@
 // (c) 2020-2021 Dian Iliev (Tuntorius)
 // This code is licensed under MIT license (see LICENSE.md for details)
 
-import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/popups/exportQRCode.dart';
 import 'package:mighty_plug_manager/audio/trackdata/trackData.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/effects/Processor.dart';
 import 'package:qr_utils/qr_utils.dart';
+import 'package:tinycolor2/tinycolor2.dart';
 
 import '../../../UI/popups/alertDialogs.dart';
 import '../../../UI/popups/changeCategory.dart';
 import '../../../bluetooth/NuxDeviceControl.dart';
 import '../../../bluetooth/devices/NuxDevice.dart';
-import 'package:tinycolor2/tinycolor2.dart';
-import '../../../platform/fileSaver.dart';
-
 import '../../../bluetooth/devices/presets/Preset.dart';
-import '../../mightierIcons.dart';
+import '../../../bluetooth/devices/presets/presetsStorage.dart';
+import '../../../platform/fileSaver.dart';
+import '../../mightier_icons.dart';
 import '../../theme.dart';
 import '../dynamic_treeview.dart';
-import 'package:flutter/material.dart';
-import '../../../bluetooth/devices/presets/presetsStorage.dart';
 
 class PresetList extends StatefulWidget {
   final void Function(dynamic)? onTap;
@@ -329,7 +326,8 @@ class _PresetListState extends State<PresetList>
           case 2:
             var channelList = <String>[];
             int nuxChannel = item["channel"];
-            var d = NuxDeviceControl().getDeviceFromId(item["product_id"]);
+            var d =
+                NuxDeviceControl.instance().getDeviceFromId(item["product_id"]);
 
             if (d != null) {
               for (int i = 0; i < d.channelsCount; i++)
@@ -387,7 +385,7 @@ class _PresetListState extends State<PresetList>
             );
             break;
           case 6:
-            var qr = NuxDeviceControl().device.jsonToQR(item);
+            var qr = NuxDeviceControl.instance().device.jsonToQR(item);
             if (qr != null) {
               Image img = await QrUtils.generateQR(qr);
               var qrExport = QRExportDialog(img, item["name"]);
@@ -425,11 +423,11 @@ class _PresetListState extends State<PresetList>
   @override
   void initState() {
     super.initState();
-    NuxDeviceControl().addListener(refreshPresets);
+    NuxDeviceControl.instance().addListener(refreshPresets);
     PresetsStorage().addListener(refreshPresets);
 
     //cache devices
-    NuxDeviceControl().deviceList.forEach((element) {
+    NuxDeviceControl.instance().deviceList.forEach((element) {
       devices[element.productStringId] = element;
     });
   }
@@ -437,7 +435,7 @@ class _PresetListState extends State<PresetList>
   @override
   void dispose() {
     super.dispose();
-    NuxDeviceControl().removeListener(refreshPresets);
+    NuxDeviceControl.instance().removeListener(refreshPresets);
     PresetsStorage().removeListener(refreshPresets);
   }
 
@@ -542,7 +540,7 @@ class _PresetListState extends State<PresetList>
         categories: PresetsStorage().getCategories(),
         items: PresetsStorage().presetsData,
         childBuilder: (item) {
-          var device = NuxDeviceControl().device;
+          var device = NuxDeviceControl.instance().device;
           var pVersion = item["version"] ?? 0;
           var devVersion = device.productVersion;
           bool newItem = false;
@@ -616,9 +614,11 @@ class _PresetListState extends State<PresetList>
                   if (widget.onTap != null)
                     widget.onTap!(item);
                   else {
-                    var dev = NuxDeviceControl().device;
+                    var dev = NuxDeviceControl.instance().device;
                     if (dev.isPresetSupported(item))
-                      NuxDeviceControl().device.presetFromJson(item, null);
+                      NuxDeviceControl.instance()
+                          .device
+                          .presetFromJson(item, null);
                   }
                   setState(() {});
                 },
@@ -634,7 +634,7 @@ class _PresetListState extends State<PresetList>
                     alignment: Alignment.center,
                     children: [
                       Icon(
-                        NuxDeviceControl()
+                        NuxDeviceControl.instance()
                             .getDeviceFromId(item["product_id"])!
                             .productIcon,
                         size: 30,

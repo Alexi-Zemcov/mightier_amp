@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE.md for details)
 
 import 'dart:core';
+
 import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 
@@ -18,7 +19,7 @@ abstract class Cabinet extends Processor {
   String get cabName;
   String get name {
     var _name = SharedPrefs().getCustomCabinetName(
-        NuxDeviceControl().device.productStringId, nuxIndex);
+        NuxDeviceControl.instance().device.productStringId, nuxIndex);
     return _name ?? cabName;
   }
 

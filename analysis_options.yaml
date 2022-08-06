@@ -2,8 +2,8 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
-    - audio_picker
-    - flutter_audio_query
-    - flutter_blue
-    - flutter_midi_command
-    - qr_utils-0.1.5
+    - audio_picker/**
+    - flutter_audio_query/**
+    - flutter_blue/**
+    - flutter_midi_command/**
+    - qr_utils-0.1.5/**

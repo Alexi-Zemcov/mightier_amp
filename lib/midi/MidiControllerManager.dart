@@ -7,8 +7,8 @@ import 'package:mighty_plug_manager/bluetooth/bleMidiHandler.dart';
 import 'package:mighty_plug_manager/midi/UsbMidiManager.dart';
 import 'package:mighty_plug_manager/midi/controllers/BleMidiController.dart';
 import 'package:mighty_plug_manager/midi/controllers/HidController.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 import 'BleMidiManager.dart';
 import 'ControllerConstants.dart';
@@ -45,17 +45,17 @@ class MidiControllerManager extends ChangeNotifier {
     BleMidiManager().addListener(_onBleMidiManagerChanged);
     loadConfig();
 
-    BLEMidiHandler().status.listen(_statusListener);
+    BLEMidiHandler.instance().status.listen(_statusListener);
   }
 
   void _statusListener(statusValue) {
     switch (statusValue) {
       case MidiSetupStatus.deviceFound:
         // check if this is valid nux device
-        BLEMidiHandler().nuxDevices.forEach((dev) {
+        BLEMidiHandler.instance().nuxDevices.forEach((dev) {
           if (dev.device.type != BluetoothDeviceType.classic) {
             //don't autoconnect on manual scan
-            if (!BLEMidiHandler().manualScan) {
+            if (!BLEMidiHandler.instance().manualScan) {
               //_midiHandler.connectToDevice(dev.device);
             }
           }

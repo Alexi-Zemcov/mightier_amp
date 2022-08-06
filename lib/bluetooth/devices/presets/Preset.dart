@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:convert/convert.dart';
 import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:qr_utils/qr_utils.dart';
+
 import '../NuxConstants.dart';
 import '../NuxDevice.dart';
 import '../effects/Processor.dart';
@@ -140,8 +141,8 @@ abstract class Preset {
 
     var loadedPreset = hex.encode(_nuxData);
 
-    NuxDeviceControl().diagData.lastNuxPreset = loadedPreset;
-    NuxDeviceControl().updateDiagnosticsData(nuxPreset: loadedPreset);
+    NuxDeviceControl.instance().diagData.lastNuxPreset = loadedPreset;
+    NuxDeviceControl.instance().updateDiagnosticsData(nuxPreset: loadedPreset);
 
     for (int i = 0; i < device.effectsChainLength; i++) {
       //set proper effect

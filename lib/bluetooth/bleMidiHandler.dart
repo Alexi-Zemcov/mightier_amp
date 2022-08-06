@@ -5,9 +5,10 @@
 //https://support.chefsteps.com/hc/en-us/articles/360009480814-I-have-an-Android-Why-am-I-being-asked-to-allow-location-access-
 import 'dart:async';
 import 'dart:collection';
+
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:mighty_plug_manager/main.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 import '../UI/pages/settings.dart';
 
 enum MidiSetupStatus {
@@ -73,7 +74,7 @@ class BLEMidiHandler {
 
   late List<String> Function() deviceListProvider;
 
-  factory BLEMidiHandler() {
+  factory BLEMidiHandler.instance() {
     return _bleHandler;
   }
 

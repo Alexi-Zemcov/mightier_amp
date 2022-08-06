@@ -2,13 +2,13 @@
 // This code is licensed under MIT license (see LICENSE.md for details)
 
 import 'package:flutter/material.dart';
-import 'communication/communication.dart';
-import 'communication/plugProCommunication.dart';
-import '../../UI/mightierIcons.dart';
 
+import '../../UI/mightier_icons.dart';
 import '../NuxDeviceControl.dart';
 import 'NuxConstants.dart';
 import 'NuxDevice.dart';
+import 'communication/communication.dart';
+import 'communication/plugProCommunication.dart';
 import 'effects/Processor.dart';
 import 'presets/PlugProPreset.dart';
 import 'presets/Preset.dart';

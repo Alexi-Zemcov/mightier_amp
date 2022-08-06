@@ -4,6 +4,7 @@ import 'package:mighty_plug_manager/UI/widgets/thickSlider.dart';
 import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/presets/Preset.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/presets/presetsStorage.dart';
+
 import '../models/trackAutomation.dart';
 
 class EventEditor {
@@ -52,7 +53,7 @@ class EventEditor {
         // your widget implementation
         return StatefulBuilder(
           builder: (context, setState) {
-            var device = NuxDeviceControl().device;
+            var device = NuxDeviceControl.instance().device;
             bool cab = device.cabinetSupport;
             var preset =
                 PresetsStorage().findPresetByUuid(event.getPresetUuid());

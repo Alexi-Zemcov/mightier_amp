@@ -5,27 +5,14 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mighty_plug_manager/UI/pages/DebugConsolePage.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/presets/presetsStorage.dart';
-import 'package:mighty_plug_manager/midi/MidiControllerManager.dart';
+import 'package:mighty_plug_manager/home_page.dart';
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'UI/pages/drumEditor.dart';
-import 'UI/pages/jamTracks.dart';
-//pages
-import 'UI/pages/presetEditor.dart';
-import 'UI/pages/settings.dart';
-import 'UI/popups/alertDialogs.dart';
 import 'UI/theme.dart';
-import 'UI/widgets/VolumeDrawer.dart';
-import 'UI/widgets/bottom_bar.dart';
-import 'UI/widgets/nestedWillPopScope.dart';
-import 'UI/widgets/nux_app_bar.dart' as nuxAppBar;
-import 'UI/widgets/presets/presetList.dart';
 import 'bluetooth/NuxDeviceControl.dart';
-import 'bluetooth/bleMidiHandler.dart';
 //recreate this file with your own api keys
 import 'configKeys.dart';
 
@@ -43,7 +30,8 @@ void main() {
       DebugConsole.print("Flutter error: ${details.toString()}");
 
       //update diagnostics with json preset
-      NuxDeviceControl().updateDiagnosticsData(includeJsonPreset: true);
+      NuxDeviceControl.instance()
+          .updateDiagnosticsData(includeJsonPreset: true);
 
       // Send report
       Sentry.captureException(
@@ -71,7 +59,8 @@ void main() {
       DebugConsole.print(stackTrace);
 
       //update diagnostics with json preset
-      NuxDeviceControl().updateDiagnosticsData(includeJsonPreset: true);
+      NuxDeviceControl.instance()
+          .updateDiagnosticsData(includeJsonPreset: true);
 
       await Sentry.captureException(
         error,
@@ -97,7 +86,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  NuxDeviceControl device = NuxDeviceControl();
+  NuxDeviceControl device = NuxDeviceControl.instance();
   SharedPrefs prefs = SharedPrefs();
   PresetsStorage storage = PresetsStorage();
 
@@ -109,252 +98,5 @@ class _AppState extends State<App> {
       home: Home(),
       navigatorKey: navigatorKey,
     );
-  }
-}
-
-class Home extends StatefulWidget {
-  final BLEMidiHandler handler = BLEMidiHandler();
-  final MidiControllerManager midiMan = MidiControllerManager();
-
-  Home({Key? key}) : super(key: key);
-
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> with TickerProviderStateMixin {
-  int _currentIndex = 0;
-  late BuildContext dialogContext;
-  late TabController controller;
-  final List<Widget> _children = [];
-
-  bool openDrawer = false;
-
-  bool connectionFailed = false;
-  late Timer _timeout;
-  StateSetter? dialogSetState;
-
-  @override
-  void initState() {
-    if (!AppThemeConfig.allowRotation)
-      SystemChrome.setPreferredOrientations(
-          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    else
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight
-      ]);
-
-    super.initState();
-
-    //add 5 pages widgets
-    _children.addAll([PresetEditor(), PresetList(), DrumEditor(), JamTracks(), Settings()]);
-
-    controller = TabController(initialIndex: 0, length: 5, vsync: this);
-
-    controller.addListener(() {
-      _currentIndex = controller.index;
-      setState(() {});
-    });
-
-    NuxDeviceControl().connectStatus.stream.listen(connectionStateListener);
-    NuxDeviceControl().addListener(onDeviceChanged);
-
-    BLEMidiHandler().initBle(bleErrorHandler);
-  }
-
-  void bleErrorHandler(BluetoothError error, dynamic data) {
-    {
-      switch (error) {
-        case BluetoothError.unavailable:
-          AlertDialogs.showInfoDialog(context,
-              title: "Warning!",
-              description: "Your device does not support bluetooth!",
-              confirmButton: "OK");
-          break;
-        case BluetoothError.permissionDenied:
-          AlertDialogs.showLocationPrompt(context, false, null);
-          break;
-        case BluetoothError.locationServiceOff:
-          AlertDialogs.showInfoDialog(context,
-              title: "Location service is disabled!",
-              description:
-                  "Please, enable location service. It is required for Bluetooth connection to work.",
-              confirmButton: "OK");
-          break;
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    NuxDeviceControl().removeListener(onDeviceChanged);
-  }
-
-  void onConnectionTimeout() async {
-    connectionFailed = true;
-    if (dialogSetState != null) {
-      dialogSetState?.call(() {});
-      await Future.delayed(Duration(seconds: 3));
-      Navigator.pop(context);
-      dialogSetState = null;
-      BLEMidiHandler().disconnectDevice();
-    }
-  }
-
-  void connectionStateListener(DeviceConnectionState event) {
-    switch (event) {
-      case DeviceConnectionState.connectedStart:
-        if (dialogSetState != null) break;
-        print("just connected");
-        connectionFailed = false;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            dialogContext = context;
-            return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-              dialogSetState = setState;
-              return NestedWillPopScope(
-                onWillPop: () => Future.value(false),
-                child: Dialog(
-                  backgroundColor: Colors.grey[700],
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: new Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (!connectionFailed) CircularProgressIndicator(),
-                        if (connectionFailed)
-                          Icon(
-                            Icons.error,
-                            color: Colors.red,
-                          ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Text(connectionFailed ? "Connection Failed!" : "Connecting"),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            });
-          },
-        );
-
-        //setup a timer incase something fails
-        _timeout = Timer(const Duration(seconds: 10), onConnectionTimeout);
-
-        break;
-      case DeviceConnectionState.presetsLoaded:
-        print("presets loaded");
-        break;
-      case DeviceConnectionState.configReceived:
-        print("config loaded");
-        dialogSetState = null;
-        _timeout.cancel();
-        Navigator.pop(context);
-        break;
-    }
-  }
-
-  Future<bool> _willPopCallback() async {
-    Completer<bool> confirmation = Completer<bool>();
-    AlertDialogs.showConfirmDialog(context,
-        title: "Exit Mightier Amp?",
-        cancelButton: "No",
-        confirmButton: "Yes",
-        confirmColor: Colors.red,
-        description: "Are you sure?", onConfirm: (val) {
-      if (val) {
-        //disconnect device if connected
-        BLEMidiHandler().disconnectDevice();
-      }
-      confirmation.complete(val);
-    });
-    return confirmation.future;
-  }
-
-  // setTab(int tab) {
-  //   _currentIndex = tab;
-  //   setState(() {});
-  //   Navigator.of(context).pop();
-  // }
-
-  void onDeviceChanged() {
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO(zemcov): replace to the screenWidth checker.
-    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-
-    //WARNING: Workaround for a flutter bug - if the app is started with screen off,
-    //one of the widgets throwns an exception and the app scaffold is empty
-    if (MediaQuery.of(context).size.width < 10) return Container();
-    return FocusScope(
-      autofocus: true,
-      onKey: (node, event) {
-        if (event.runtimeType.toString() == 'RawKeyDownEvent' &&
-            event.logicalKey.keyId != 0x100001005) {
-          MidiControllerManager().onHIDData(event);
-        }
-        return KeyEventResult.skipRemainingHandlers;
-      },
-      child: NestedWillPopScope(
-        onWillPop: _willPopCallback,
-        child: Scaffold(
-          appBar: nuxAppBar.getAppBar(widget.handler),
-          body: Column(
-            children: [
-              Expanded(
-                child: TabBarView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: controller,
-                  children: _children,
-                ),
-              ),
-              VolumeDrawer(
-                  expanded: openDrawer,
-                  onChanged: () => setState(() {}),
-                  onExpandChange: (val) => openDrawer = val)
-            ],
-          ),
-          bottomNavigationBar: !isPortrait
-              ? null
-              : GestureDetector(
-                  onVerticalDragUpdate: _onBottomBarSwipe,
-                  child: BottomBar(
-                    index: _currentIndex,
-                    onTap: onBottomBarTap,
-                  ),
-                ),
-        ),
-      ),
-    );
-  }
-
-  void _onBottomBarSwipe(details) {
-    if (details.delta.dy < 0) {
-      //open
-      openDrawer = true;
-    } else {
-      //close
-      openDrawer = false;
-    }
-    setState(() {});
-  }
-
-  void onBottomBarTap(index) {
-    setState(() {
-      _currentIndex = index;
-      controller.animateTo(_currentIndex);
-    });
   }
 }

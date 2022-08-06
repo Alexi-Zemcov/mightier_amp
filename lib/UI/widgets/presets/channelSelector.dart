@@ -8,8 +8,9 @@ import 'package:mighty_plug_manager/UI/popups/exportQRCode.dart';
 import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/platform/fileSaver.dart';
 import 'package:qr_utils/qr_utils.dart';
-import '../../../bluetooth/devices/presets/Preset.dart';
+
 import '../../../bluetooth/devices/NuxDevice.dart';
+import '../../../bluetooth/devices/presets/Preset.dart';
 import '../../theme.dart';
 import 'effectSelector.dart';
 
@@ -163,7 +164,7 @@ class _ChannelSelectorState extends State<ChannelSelector> {
     var result =
         _presets[widget.device.selectedChannel].setupPresetFromQRData(qrData);
     bool success = result == PresetQRError.Ok;
-    NuxDeviceControl().clearUndoStack();
+    NuxDeviceControl.instance().clearUndoStack();
 
     var message = QrUtils.QRMessages[result.index];
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

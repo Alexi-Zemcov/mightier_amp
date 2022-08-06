@@ -4,8 +4,8 @@
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/communication/communication.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/communication/plugAirCommunication.dart';
-import '../../UI/mightierIcons.dart';
 
+import '../../UI/mightier_icons.dart';
 import '../NuxDeviceControl.dart';
 import 'NuxConstants.dart';
 import 'NuxDevice.dart';

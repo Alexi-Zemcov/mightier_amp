@@ -12,7 +12,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:undo/undo.dart';
 
 import 'bleMidiHandler.dart';
-
 import 'devices/NuxConstants.dart';
 import 'devices/NuxDevice.dart';
 import 'devices/NuxMighty2040BT.dart';
@@ -35,7 +34,7 @@ class NuxDiagnosticData {
     data['lastNuxPreset'] = lastNuxPreset;
 
     if (includeJsonPreset)
-      data['jsonPreset'] = NuxDeviceControl().device.presetToJson();
+      data['jsonPreset'] = NuxDeviceControl.instance().device.presetToJson();
 
     return data;
   }
@@ -44,7 +43,11 @@ class NuxDiagnosticData {
 class NuxDeviceControl extends ChangeNotifier {
   static final NuxDeviceControl _nuxDeviceControl = NuxDeviceControl._();
 
-  final BLEMidiHandler _midiHandler = BLEMidiHandler();
+  factory NuxDeviceControl.instance() {
+    return _nuxDeviceControl;
+  }
+
+  final BLEMidiHandler _midiHandler = BLEMidiHandler.instance();
 
   NuxDiagnosticData diagData = NuxDiagnosticData();
 
@@ -160,10 +163,6 @@ class NuxDeviceControl extends ChangeNotifier {
 
   forceNotifyListeners() {
     notifyListeners();
-  }
-
-  factory NuxDeviceControl() {
-    return _nuxDeviceControl;
   }
 
   NuxDeviceControl._() {

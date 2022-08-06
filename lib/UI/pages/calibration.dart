@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mighty_plug_manager/UI/widgets/nestedWillPopScope.dart';
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
+
 import '../../bluetooth/NuxDeviceControl.dart';
 import '../../bluetooth/devices/presets/Preset.dart';
 
@@ -19,7 +20,7 @@ class _CalibrationState extends State<Calibration> {
   int nuxMode = 0;
   bool toggled = false;
   Color presetColor = Preset.channelColors[0];
-  NuxDeviceControl devControl = NuxDeviceControl();
+  NuxDeviceControl devControl = NuxDeviceControl.instance();
 
   @override
   void initState() {
@@ -64,7 +65,7 @@ class _CalibrationState extends State<Calibration> {
         await player.dispose();
 
         //reset to prevent device losing sync
-        NuxDeviceControl().resetToChannelDefaults();
+        NuxDeviceControl.instance().resetToChannelDefaults();
         return true;
       },
       child: Scaffold(
