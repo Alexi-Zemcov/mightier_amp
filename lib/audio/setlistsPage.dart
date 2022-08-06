@@ -15,7 +15,7 @@ class SetLists extends StatefulWidget {
 }
 
 class _SetListsState extends State<SetLists> {
-  Offset _position = Offset(0, 0);
+  Offset _position = const Offset(0, 0);
 
   @override
   void initState() {
@@ -65,7 +65,7 @@ class _SetListsState extends State<SetLists> {
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Rename"),
+          const Text("Rename"),
         ],
       ),
     ),
@@ -78,7 +78,7 @@ class _SetListsState extends State<SetLists> {
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Delete"),
+          const Text("Delete"),
         ],
       ),
     )
@@ -150,7 +150,7 @@ class _SetListsState extends State<SetLists> {
   Widget build(BuildContext context) {
     var setlists = TrackData().setlists;
     if (TrackData().tracks.isEmpty)
-      return Center(child: Text("Add some tracks first!"));
+      return const Center(child: const Text("Add some tracks first!"));
     return ListTileTheme(
       iconColor: Colors.white,
       child: Stack(
@@ -163,7 +163,7 @@ class _SetListsState extends State<SetLists> {
                     left: AppThemeConfig.dragHandlesWidth, right: 16),
                 title: Text(TrackData().allTracks.name),
                 subtitle: Text("${TrackData().allTracks.items.length} tracks"),
-                trailing: Icon(Icons.keyboard_arrow_right),
+                trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => SetlistPage(
@@ -205,7 +205,7 @@ class _SetListsState extends State<SetLists> {
                                     child: Container(
                                       width: AppThemeConfig.dragHandlesWidth,
                                       height: 64,
-                                      child: Icon(
+                                      child: const Icon(
                                         Icons.drag_handle,
                                         color: Colors.grey,
                                         size: 24,
@@ -216,13 +216,14 @@ class _SetListsState extends State<SetLists> {
                                 ),
                                 Expanded(
                                   child: ListTile(
-                                    contentPadding: EdgeInsets.only(right: 16),
+                                    contentPadding:
+                                        const EdgeInsets.only(right: 16),
                                     title: Text(setlists[index].name),
                                     subtitle: Text(
                                         "${setlists[index].items.length} tracks"),
                                     trailing: PopupMenuButton(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
+                                      child: const Padding(
+                                        padding: EdgeInsets.only(
                                             left: 12.0,
                                             right: 4,
                                             bottom: 10,
@@ -267,7 +268,7 @@ class _SetListsState extends State<SetLists> {
               onPressed: () {
                 createSetlist();
               },
-              child: Icon(
+              child: const Icon(
                 Icons.add,
                 size: 28,
               ),

@@ -67,7 +67,7 @@ class _TracksPageState extends State<TracksPage>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Edit"),
+          const Text("Edit"),
         ],
       ),
     ),
@@ -80,7 +80,7 @@ class _TracksPageState extends State<TracksPage>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Rename"),
+          const Text("Rename"),
         ],
       ),
     ),
@@ -93,7 +93,7 @@ class _TracksPageState extends State<TracksPage>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Delete"),
+          const Text("Delete"),
         ],
       ),
     )
@@ -151,7 +151,7 @@ class _TracksPageState extends State<TracksPage>
 
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 260),
+      duration: const Duration(milliseconds: 260),
     );
 
     final curvedAnimation =
@@ -225,9 +225,8 @@ class _TracksPageState extends State<TracksPage>
 
     if (widget.selectorOnly) return null;
     return PopupMenuButton(
-      child: Padding(
-        padding:
-            const EdgeInsets.only(left: 12.0, right: 4, bottom: 10, top: 10),
+      child: const Padding(
+        padding: EdgeInsets.only(left: 12.0, right: 4, bottom: 10, top: 10),
         child: Icon(Icons.more_vert, color: Colors.grey),
       ),
       itemBuilder: (context) {
@@ -304,7 +303,8 @@ class _TracksPageState extends State<TracksPage>
 
   void addFromMediaLibrary(BuildContext context) {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => MediaLibraryBrowser()))
+        .push(MaterialPageRoute(
+            builder: (context) => const MediaLibraryBrowser()))
         .then((value) {
       if (value is List<SongInfo>) {
         for (int i = 0; i < value.length; i++) {
@@ -323,7 +323,8 @@ class _TracksPageState extends State<TracksPage>
 
   void addFromOnlineSource(BuildContext context) {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => OnlineSourceSearch()))
+        .push(
+            MaterialPageRoute(builder: (context) => const OnlineSourceSearch()))
         .then((value) {
       if (value is List<OnlineTrack>) {
         for (int i = 0; i < value.length; i++) {
@@ -357,9 +358,9 @@ class _TracksPageState extends State<TracksPage>
   }
 
   void _scollToNewSongs() async {
-    await Future.delayed(Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 300));
     scrollController.animateTo(scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300), curve: Curves.easeInCubic);
+        duration: const Duration(milliseconds: 300), curve: Curves.easeInCubic);
   }
 
   @override
@@ -372,116 +373,21 @@ class _TracksPageState extends State<TracksPage>
         }
         return Future.value(true);
       },
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              if (TrackData().tracks.isNotEmpty)
-                SearchTextField(controller: searchCtrl),
-              Expanded(
-                child: ListTileTheme(
-                  selectedTileColor: Color.fromARGB(255, 9, 51, 116),
-                  selectedColor: Colors.white,
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      IndexedStack(
-                        index: TrackData().tracks.isEmpty ? 0 : 1,
-                        children: [
-                          Center(
-                              child: Text("No Tracks",
-                                  style:
-                                      Theme.of(context).textTheme.bodyText1)),
-                          ListView.builder(
-                            controller: scrollController,
-                            itemCount: TrackData().tracks.length,
-                            itemBuilder: (context, index) {
-                              if (filter != "" &&
-                                  !TrackData()
-                                      .tracks[index]
-                                      .name
-                                      .toLowerCase()
-                                      .contains(filter))
-                                return const SizedBox();
-                              return ListTile(
-                                selected: multiselectMode &&
-                                    selected.containsKey(index),
-                                title: Text(TrackData().tracks[index].name),
-                                onTap: () {
-                                  if (multiselectMode) {
-                                    multiselectHandler(index);
-                                    return;
-                                  }
-                                  if (widget.selectorOnly)
-                                    widget.onSelectedTrack
-                                        ?.call(TrackData().tracks[index]);
-                                  else
-                                    editTrack(
-                                        context, TrackData().tracks[index]);
-                                },
-                                onLongPress: () => multiselectHandler(index),
-                                trailing: createTrailingWidget(context, index),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      if (!widget.selectorOnly)
-                        FloatingActionBubble(
+      child: Scaffold(
+        body: Column(
+          children: [
+            if (TrackData().tracks.isNotEmpty)
+              SearchTextField(controller: searchCtrl),
+            Expanded(
+              child: ListTileTheme(
+                selectedTileColor: const Color.fromARGB(255, 9, 51, 116),
+                selectedColor: Colors.white,
+                child: Scaffold(
+                  floatingActionButton: (widget.selectorOnly)
+                      ? null
+                      : FloatingActionBubble(
                           // Menu items
-                          items: [
-                            // Floating action menu item
-                            if (kDebugMode)
-                              Bubble(
-                                  title: "Youtube",
-                                  iconColor: Colors.white,
-                                  bubbleColor: Colors.red,
-                                  icon: Icons.ondemand_video_outlined,
-                                  titleStyle: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                  onPress: () {
-                                    _animationController.reverse();
-                                    addFromYoutubeSource(context);
-                                  }),
-                            if (kDebugMode)
-                              Bubble(
-                                title: "Online Source",
-                                iconColor: Colors.white,
-                                bubbleColor: Colors.blue,
-                                icon: Icons.cloud,
-                                titleStyle: TextStyle(
-                                    fontSize: 16, color: Colors.white),
-                                onPress: () {
-                                  _animationController.reverse();
-                                  addFromOnlineSource(context);
-                                },
-                              ),
-                            Bubble(
-                              title: "Media Library",
-                              iconColor: Colors.white,
-                              bubbleColor: Colors.blue,
-                              icon: Icons.library_music,
-                              titleStyle:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                              onPress: () {
-                                _animationController.reverse();
-                                addFromMediaLibrary(context);
-                              },
-                            ),
-                            //Floating action menu item
-                            Bubble(
-                              title: "File Browser",
-                              iconColor: Colors.white,
-                              bubbleColor: Colors.blue,
-                              icon: Icons.folder,
-                              titleStyle:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                              onPress: () {
-                                _animationController.reverse();
-                                addFromFile();
-                              },
-                            ),
-                          ],
+                          items: _bubbles(context),
 
                           // animation controller
                           animation: _animation,
@@ -502,15 +408,103 @@ class _TracksPageState extends State<TracksPage>
                           // Flaoting Action button Icon
                           iconData: multiselectMode ? Icons.delete : Icons.add,
                           backGroundColor: Colors.blue,
-                        )
+                        ),
+                  body: IndexedStack(
+                    index: TrackData().tracks.isEmpty ? 0 : 1,
+                    children: [
+                      Center(
+                          child: Text("No Tracks",
+                              style: Theme.of(context).textTheme.bodyText1)),
+                      ListView.builder(
+                        controller: scrollController,
+                        itemCount: TrackData().tracks.length,
+                        itemBuilder: (context, index) {
+                          if (filter != "" &&
+                              !TrackData()
+                                  .tracks[index]
+                                  .name
+                                  .toLowerCase()
+                                  .contains(filter)) return const SizedBox();
+                          return ListTile(
+                            selected:
+                                multiselectMode && selected.containsKey(index),
+                            title: Text(TrackData().tracks[index].name),
+                            onTap: () {
+                              if (multiselectMode) {
+                                multiselectHandler(index);
+                                return;
+                              }
+                              if (widget.selectorOnly)
+                                widget.onSelectedTrack
+                                    ?.call(TrackData().tracks[index]);
+                              else
+                                editTrack(context, TrackData().tracks[index]);
+                            },
+                            onLongPress: () => multiselectHandler(index),
+                            trailing: createTrailingWidget(context, index),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  List<Bubble> _bubbles(BuildContext context) {
+    return [
+      // Floating action menu item
+      if (kDebugMode)
+        Bubble(
+            title: "Youtube",
+            iconColor: Colors.white,
+            bubbleColor: Colors.red,
+            icon: Icons.ondemand_video_outlined,
+            titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+            onPress: () {
+              _animationController.reverse();
+              addFromYoutubeSource(context);
+            }),
+      if (kDebugMode)
+        Bubble(
+          title: "Online Source",
+          iconColor: Colors.white,
+          bubbleColor: Colors.blue,
+          icon: Icons.cloud,
+          titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+          onPress: () {
+            _animationController.reverse();
+            addFromOnlineSource(context);
+          },
+        ),
+      Bubble(
+        title: "Media Library",
+        iconColor: Colors.white,
+        bubbleColor: Colors.blue,
+        icon: Icons.library_music,
+        titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+        onPress: () {
+          _animationController.reverse();
+          addFromMediaLibrary(context);
+        },
+      ),
+      //Floating action menu item
+      Bubble(
+        title: "File Browser",
+        iconColor: Colors.white,
+        bubbleColor: Colors.blue,
+        icon: Icons.folder,
+        titleStyle: const TextStyle(fontSize: 16, color: Colors.white),
+        onPress: () {
+          _animationController.reverse();
+          addFromFile();
+        },
+      ),
+    ];
   }
 }

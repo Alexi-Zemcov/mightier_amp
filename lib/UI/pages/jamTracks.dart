@@ -68,12 +68,12 @@ class _JamTracksState extends State<JamTracks> with TickerProviderStateMixin {
   }
 
   Widget showSetlists(bool hasTracks) {
-    if (hasTracks) return SetLists();
+    if (hasTracks) return const SetLists();
     return Stack(
       children: [
-        SetLists(),
+        const SetLists(),
         TextButton(
-          child: Center(child: Text("")),
+          child: const Center(child: const Text("")),
           onPressed: () {
             cntrl.index = 1;
           },
@@ -86,42 +86,53 @@ class _JamTracksState extends State<JamTracks> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     bool hasTracks = TrackData().tracks.isNotEmpty;
 
-    return FutureBuilder<PermissionStatus>(
-      future: Permission.storage.status,
-      builder:
-          (BuildContext context, AsyncSnapshot<PermissionStatus> snapshot) {
-        if (snapshot.hasData) {
-          switch (snapshot.data) {
-            case PermissionStatus.denied:
-              return Center(
-                child: ElevatedButton(
-                  child: Text("Grant storage permission"),
-                  onPressed: () async {
-                    await Permission.storage.request();
-                    setState(() {});
-                  },
-                ),
-              );
-            case PermissionStatus.granted:
-              return Column(
-                children: [
-                  TabBar(
-                    tabs: [Tab(text: "Setlists"), Tab(text: "Tracks")],
-                    controller: cntrl,
+    return SafeArea(
+      child: FutureBuilder<PermissionStatus>(
+        future: Permission.storage.status,
+        builder:
+            (BuildContext context, AsyncSnapshot<PermissionStatus> snapshot) {
+          if (snapshot.hasData) {
+            switch (snapshot.data) {
+              case PermissionStatus.denied:
+                return Center(
+                  child: ElevatedButton(
+                    child: const Text("Grant storage permission"),
+                    onPressed: () async {
+                      await Permission.storage.request();
+                      setState(() {});
+                    },
                   ),
-                  Expanded(
-                    child: TabBarView(
+                );
+              case PermissionStatus.granted:
+                return Scaffold(
+                  body: Column(
+                    children: [
+                      TabBar(
+                        tabs: const [
+                          Tab(text: "Setlists"),
+                          Tab(text: "Tracks")
+                        ],
                         controller: cntrl,
-                        children: [showSetlists(hasTracks), TracksPage()]),
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                          controller: cntrl,
+                          children: [
+                            showSetlists(hasTracks),
+                            const TracksPage(),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              );
-            default:
-              return Text("Permission declined");
+                );
+              default:
+                return const Text("Permission declined");
+            }
           }
-        }
-        return Text("Unknown status");
-      },
+          return const Text("Unknown status");
+        },
+      ),
     );
   }
 }
