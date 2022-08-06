@@ -200,46 +200,44 @@ class _MainTabsState extends State<MainTabs> with TickerProviderStateMixin {
         onWillPop: _willPopCallback,
         child: Scaffold(
           appBar: layoutMode != LayoutMode.navBar ? null : const NuxAppBar(),
-          body: SizedBox(
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                Row(
-                  children: [
-                    if (layoutMode == LayoutMode.drawer)
-                      AppDrawer(
-                        onSwitchPageIndex: _onTabBarSwitchIndex,
-                        currentIndex: _currentIndex,
-                        totalTabs: _tabs.length,
-                        currentVolume: currentVolume,
-                        onVolumeChanged: _onVolumeChanged,
-                        onVolumeDragEnd: _onVolumeDragEnd,
-                      ),
-                    Expanded(
-                      child: layoutMode == LayoutMode.navBar
-                          ? TabBarView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              controller: controller,
-                              children: _tabs,
-                            )
-                          : _tabs.elementAt(_currentIndex),
-                    ),
-                  ],
-                ),
-                if (layoutMode != LayoutMode.drawer)
-                  BottomDrawer(
-                    isBottomDrawerOpen: isBottomDrawerOpen,
-                    onExpandChange: (val) => setState(() {
-                      isBottomDrawerOpen = val;
-                    }),
-                    child: VolumeSlider(
+          body: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Row(
+                children: [
+                  if (layoutMode == LayoutMode.drawer)
+                    AppDrawer(
+                      onSwitchPageIndex: _onTabBarSwitchIndex,
+                      currentIndex: _currentIndex,
+                      totalTabs: _tabs.length,
                       currentVolume: currentVolume,
                       onVolumeChanged: _onVolumeChanged,
                       onVolumeDragEnd: _onVolumeDragEnd,
                     ),
+                  Expanded(
+                    child: layoutMode == LayoutMode.navBar
+                        ? TabBarView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: controller,
+                            children: _tabs,
+                          )
+                        : _tabs.elementAt(_currentIndex),
                   ),
-              ],
-            ),
+                ],
+              ),
+              if (layoutMode != LayoutMode.drawer)
+                BottomDrawer(
+                  isBottomDrawerOpen: isBottomDrawerOpen,
+                  onExpandChange: (val) => setState(() {
+                    isBottomDrawerOpen = val;
+                  }),
+                  child: VolumeSlider(
+                    currentVolume: currentVolume,
+                    onVolumeChanged: _onVolumeChanged,
+                    onVolumeDragEnd: _onVolumeDragEnd,
+                  ),
+                ),
+            ],
           ),
           bottomNavigationBar: layoutMode == LayoutMode.navBar
               ? GestureDetector(

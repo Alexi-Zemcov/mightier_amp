@@ -58,26 +58,37 @@ class _PresetEditorState extends State<PresetEditor> {
     setState(() {});
   }
 
+  Widget wrapContainer(bool isPortrait, List<Widget> children) {
+    if (isPortrait) {
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 592),
+        child: Column(children: children),
+      );
+    } else {
+      return ListView(children: children);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+
     bool uploadPresetEnabled =
         device.deviceControl.isConnected && device.presetSaveSupport;
 
     return SafeArea(
-      child: ListView(
-        children: [
+      child: wrapContainer(
+        isPortrait,
+        [
           Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               ButtonTheme(
                 minWidth: 45,
                 height: 45,
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         MaterialButton(
                           onPressed: NuxDeviceControl.instance().changes.canUndo
@@ -108,7 +119,6 @@ class _PresetEditorState extends State<PresetEditor> {
                       ],
                     ),
                     Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         ToggleButtons(
                           constraints: const BoxConstraints(
@@ -150,7 +160,6 @@ class _PresetEditorState extends State<PresetEditor> {
                       ],
                     ),
                     Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -187,7 +196,10 @@ class _PresetEditorState extends State<PresetEditor> {
               ),
             ],
           ),
-          ChannelSelector(device: device)
+          if (isPortrait)
+            Flexible(child: ChannelSelector(device: device))
+          else
+            ChannelSelector(device: device)
         ],
       ),
     );
