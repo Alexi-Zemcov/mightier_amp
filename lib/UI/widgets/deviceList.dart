@@ -9,6 +9,8 @@ import '../../bluetooth/bleMidiHandler.dart';
 class DeviceList extends StatelessWidget {
   final BLEMidiHandler midiHandler = BLEMidiHandler.instance();
 
+  DeviceList({Key? key}) : super(key: key);
+
   bool isConnected(DeviceIdentifier id) {
     //check with nux device first
     if (midiHandler.connectedDevice != null &&

@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 class DebugConsole extends StatelessWidget {
   static String output = "";
 
+  DebugConsole({Key? key}) : super(key: key);
+
   static void print(Object? value) {
     output += value.toString();
   }
@@ -23,7 +25,7 @@ class DebugConsole extends StatelessWidget {
           ),
           ElevatedButton(
               onPressed: () {
-                Clipboard.setData(new ClipboardData(text: output));
+                Clipboard.setData(ClipboardData(text: output));
               },
               child: Text("Copy to Clipboard"))
         ],

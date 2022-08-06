@@ -9,6 +9,7 @@ import 'package:mighty_plug_manager/UI/widgets/nestedWillPopScope.dart';
 import 'package:mighty_plug_manager/UI/widgets/searchTextField.dart';
 import 'package:mighty_plug_manager/audio/widgets/media_library/media_browse.dart';
 import 'package:path/path.dart';
+
 import 'audioEditor.dart';
 import 'models/jamTrack.dart';
 import 'online_sources/YoutubeSource.dart';
@@ -22,8 +23,12 @@ class TracksPage extends StatefulWidget {
   final Function(JamTrack)? onSelectedTrack;
   final Function(bool, Map<int, bool>)? multiSelectState;
 
-  TracksPage(
-      {this.selectorOnly = false, this.onSelectedTrack, this.multiSelectState});
+  const TracksPage(
+      {Key? key,
+      this.selectorOnly = false,
+      this.onSelectedTrack,
+      this.multiSelectState})
+      : super(key: key);
 
   @override
   _TracksPageState createState() => _TracksPageState();
@@ -164,13 +169,13 @@ class _TracksPageState extends State<TracksPage>
   }
 
   void multiselectHandler(int index) {
-    if (selected.length == 0 || !selected.containsKey(index)) {
+    if (selected.isEmpty || !selected.containsKey(index)) {
       //fill it first if not created
       selected[index] = true;
       multiselectMode = true;
     } else {
       selected.remove(index);
-      if (selected.length == 0) multiselectMode = false;
+      if (selected.isEmpty) multiselectMode = false;
     }
     setState(() {});
   }
@@ -371,7 +376,7 @@ class _TracksPageState extends State<TracksPage>
         children: [
           Column(
             children: [
-              if (TrackData().tracks.length > 0)
+              if (TrackData().tracks.isNotEmpty)
                 SearchTextField(controller: searchCtrl),
               Expanded(
                 child: ListTileTheme(
@@ -381,7 +386,7 @@ class _TracksPageState extends State<TracksPage>
                     alignment: Alignment.bottomRight,
                     children: [
                       IndexedStack(
-                        index: TrackData().tracks.length == 0 ? 0 : 1,
+                        index: TrackData().tracks.isEmpty ? 0 : 1,
                         children: [
                           Center(
                               child: Text("No Tracks",

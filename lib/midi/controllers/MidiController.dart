@@ -4,6 +4,7 @@ import 'package:mighty_plug_manager/midi/ControllerConstants.dart';
 import 'ControllerHotkeys.dart';
 
 enum ControllerType { Hid, MidiUsb, MidiBle }
+
 enum ControllerStatus { Connected, Disconnected }
 
 abstract class MidiController {
@@ -111,7 +112,7 @@ abstract class MidiController {
   Future<bool> connect();
 
   Map<String, dynamic> toJson() {
-    var data = Map<String, dynamic>();
+    var data = <String, dynamic>{};
     data["name"] = name;
     data["id"] = id;
 

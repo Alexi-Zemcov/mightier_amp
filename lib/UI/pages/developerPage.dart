@@ -7,6 +7,8 @@ import 'package:mighty_plug_manager/bluetooth/bleMidiHandler.dart';
 enum midiMessage { ccMessage, sysExMessage }
 
 class DeveloperPage extends StatefulWidget {
+  const DeveloperPage({Key? key}) : super(key: key);
+
   @override
   _DeveloperPageState createState() => _DeveloperPageState();
 }
@@ -28,7 +30,7 @@ class _DeveloperPageState extends State<DeveloperPage> {
 
   void _onDataReceive(List<int> data) {
     setState(() {
-      controller.text += data.toString() + "\n";
+      controller.text += "$data\n";
     });
   }
 

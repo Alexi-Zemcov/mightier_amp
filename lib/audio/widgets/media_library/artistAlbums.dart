@@ -9,7 +9,7 @@ import 'albumTracks.dart';
 class ArtistAlbums extends StatelessWidget {
   final String artist;
   final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-  ArtistAlbums(this.artist);
+  ArtistAlbums(this.artist, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     Future<List<AlbumInfo>> album =

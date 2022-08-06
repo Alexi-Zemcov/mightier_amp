@@ -260,7 +260,7 @@ class BLEMidiHandler {
       print("Connect error $e");
       _connectInProgress = false;
       if (e == 'already_connected') return;
-      throw (e);
+      rethrow;
     }
 
     if (ampDevice) {
@@ -323,7 +323,7 @@ class BLEMidiHandler {
       print("Connect error $e");
       _connectInProgress = false;
       if (e == 'already_connected') return null;
-      throw (e);
+      rethrow;
     }
 
     List<BluetoothService> services = await device.discoverServices();
@@ -369,7 +369,7 @@ class BLEMidiHandler {
 
   void queueSender() async {
     queueFree = false;
-    Stopwatch stopwatch = new Stopwatch()..start();
+    Stopwatch stopwatch = Stopwatch()..start();
     //List<int> currentData = List<int>();
 
     while (dataQueue.isNotEmpty) {

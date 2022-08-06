@@ -7,12 +7,14 @@ import 'package:mighty_plug_manager/audio/trackdata/trackData.dart';
 import 'models/setlist.dart';
 import 'setlistPage.dart';
 
-class Setlists extends StatefulWidget {
+class SetLists extends StatefulWidget {
+  const SetLists({Key? key}) : super(key: key);
+
   @override
-  _SetlistsState createState() => _SetlistsState();
+  _SetListsState createState() => _SetListsState();
 }
 
-class _SetlistsState extends State<Setlists> {
+class _SetListsState extends State<SetLists> {
   Offset _position = Offset(0, 0);
 
   @override
@@ -85,7 +87,7 @@ class _SetlistsState extends State<Setlists> {
   void showContextMenu(
       BuildContext context, dynamic item, List<PopupMenuEntry> _menu) {
     final RenderBox? overlay =
-        Overlay.of(context)!.context.findRenderObject() as RenderBox;
+        Overlay.of(context)?.context.findRenderObject() as RenderBox?;
     //open menu
     if (overlay != null) {
       var rect = RelativeRect.fromRect(
@@ -147,7 +149,7 @@ class _SetlistsState extends State<Setlists> {
   @override
   Widget build(BuildContext context) {
     var setlists = TrackData().setlists;
-    if (TrackData().tracks.length == 0)
+    if (TrackData().tracks.isEmpty)
       return Center(child: Text("Add some tracks first!"));
     return ListTileTheme(
       iconColor: Colors.white,

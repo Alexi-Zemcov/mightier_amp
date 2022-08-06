@@ -18,6 +18,7 @@ class PaintedWaveform extends StatefulWidget {
   final AutomationEventType? showType;
   final AutomationController automation;
   final Function(double, double) onTimingData;
+
   PaintedWaveform(
       {Key? key,
       required this.sampleData,
@@ -49,6 +50,7 @@ class _PaintedWaveformState extends State<PaintedWaveform> {
   bool isSingle = true;
 
   bool layoutBuilt = false;
+
   void initScaling() {
     endPosition = widget.sampleData!.data.length - 1;
 
@@ -159,7 +161,6 @@ class _PaintedWaveformState extends State<PaintedWaveform> {
       widget.onTimingData(samplesPerPixel, msPerSample);
       //time = (widget.currentSample / msPerSample) / 1000;
       //create automation event handles (TODO: move them in separate widget)
-      int realIndex = 0;
       for (int i = 0; i < widget.automation.events.length; i++) {
         var element = widget.automation.events[i];
         bool empty = element.type == AutomationEventType.preset &&
@@ -190,23 +191,23 @@ class _PaintedWaveformState extends State<PaintedWaveform> {
               setState(() {});
             },
             child: FloatingActionButton(
-                onPressed: () {
-                  widget.automation.selectedEvent = widget.automation.events[i];
-                  widget.onEventSelectionChanged();
-                  setState(() {});
-                },
-                backgroundColor:
-                    empty ? Colors.grey : Preset.channelColors[element.channel],
-                child: Icon(widget.automation.selectedEvent ==
-                        widget.automation.events[i]
-                    ? Icons.circle
-                    : null),
-                heroTag: "dragTag$i"),
+              onPressed: () {
+                widget.automation.selectedEvent = widget.automation.events[i];
+                widget.onEventSelectionChanged();
+                setState(() {});
+              },
+              backgroundColor:
+                  empty ? Colors.grey : Preset.channelColors[element.channel],
+              heroTag: "dragTag$i",
+              child: Icon(
+                  widget.automation.selectedEvent == widget.automation.events[i]
+                      ? Icons.circle
+                      : null),
+            ),
           ),
         );
 
         automationEventButtons.add(w);
-        realIndex++;
       }
     }
     return ColoredBox(

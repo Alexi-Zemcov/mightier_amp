@@ -18,7 +18,7 @@ enum MLiteChannel { Clean, Overdrive, Distortion }
 class NuxMightyLite extends NuxDevice {
   int get productVID => 48;
 
-  late LiteCommunication _communication = new LiteCommunication(this);
+  late final LiteCommunication _communication = LiteCommunication(this);
   DeviceCommunication get communication => _communication;
 
   String get productName => "NUX Mighty Lite BT";

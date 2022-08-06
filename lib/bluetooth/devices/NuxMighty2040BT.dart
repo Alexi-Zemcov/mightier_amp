@@ -25,36 +25,54 @@ enum M2040BTChannel {
 }
 
 class NuxMighty2040BT extends NuxDevice {
+  @override
   int get productVID => 48;
 
-  late LiteCommunication _communication = new LiteCommunication(this);
+  late final LiteCommunication _communication = LiteCommunication(this);
+  @override
   DeviceCommunication get communication => _communication;
 
-  static const _group1 = 0;
-  static const _group2 = 1;
-
+  @override
   String get productName => "NUX Mighty 20/40 BT";
+  @override
   String get productNameShort => "Mighty 20/40 BT";
+  @override
   String get productStringId => "mighty_20_40bt";
+  @override
   int get productVersion => 0;
+  @override
   IconData get productIcon => MightierIcons.amp_20bt;
+  @override
   List<String> get productBLENames =>
       ["NUX MIGHTY20BT MIDI", "NUX MIGHTY40BT MIDI"];
 
+  @override
   int get channelsCount => 8;
+  @override
   int get effectsChainLength => 5;
   int get groupsCount => 1;
+  @override
   int get amplifierSlotIndex => 1;
+  @override
   bool get cabinetSupport => false;
+  @override
   int get cabinetSlotIndex => 0;
+  @override
   bool get presetSaveSupport => false;
+  @override
   bool get reorderableFXChain => false;
+  @override
   bool get advancedSettingsSupport => false;
+  @override
   bool get batterySupport => false;
+  @override
   int get channelChangeCC => MidiCCValues.bCC_AmpMode;
+  @override
   int get deviceQRId => 4;
 
+  @override
   List<String> get groupsName => ["All"]; //, "Group 2"];
+  @override
   List<ProcessorInfo> get processorList => _processorList;
 
   final List<ProcessorInfo> _processorList = [
@@ -172,8 +190,10 @@ class NuxMighty2040BT extends NuxDevice {
     presets.addAll(presets2);
   }
 
+  @override
   List<String> getDrumStyles() => drumStyles;
 
+  @override
   List<Preset> getPresetsList() {
     return presets;
   }

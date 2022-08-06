@@ -9,13 +9,15 @@ import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'artistAlbums.dart';
 
 class MediaLibraryBrowser extends StatefulWidget {
+  const MediaLibraryBrowser({Key? key}) : super(key: key);
+
   @override
   _MediaLibraryBrowserState createState() => _MediaLibraryBrowserState();
 }
 
 class _MediaLibraryBrowserState extends State<MediaLibraryBrowser> {
   final StreamController<String> _refreshController =
-      new StreamController<String>();
+      StreamController<String>();
 
   //Future<List<SongInfo>> songs;
   static List<ArtistInfo> artists = [];
@@ -34,7 +36,7 @@ class _MediaLibraryBrowserState extends State<MediaLibraryBrowser> {
 
   Future<void> getArtists({bool refresh = true}) async {
     final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-    if (artists.length == 0 || refresh) artists = await audioQuery.getArtists();
+    if (artists.isEmpty || refresh) artists = await audioQuery.getArtists();
     print("Artists ready");
     _refreshController.add("");
   }

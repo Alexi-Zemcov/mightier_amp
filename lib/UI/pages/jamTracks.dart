@@ -11,6 +11,8 @@ import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class JamTracks extends StatefulWidget {
+  const JamTracks({Key? key}) : super(key: key);
+
   @override
   _JamTracksState createState() => _JamTracksState();
 }
@@ -66,10 +68,10 @@ class _JamTracksState extends State<JamTracks> with TickerProviderStateMixin {
   }
 
   Widget showSetlists(bool hasTracks) {
-    if (hasTracks) return Setlists();
+    if (hasTracks) return SetLists();
     return Stack(
       children: [
-        Setlists(),
+        SetLists(),
         TextButton(
           child: Center(child: Text("")),
           onPressed: () {
@@ -82,7 +84,7 @@ class _JamTracksState extends State<JamTracks> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    bool hasTracks = TrackData().tracks.length > 0;
+    bool hasTracks = TrackData().tracks.isNotEmpty;
 
     return FutureBuilder<PermissionStatus>(
       future: Permission.storage.status,

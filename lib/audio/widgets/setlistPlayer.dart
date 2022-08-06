@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marquee_text/marquee_text.dart';
+
 import '../setlistPage.dart';
 import 'speedPanel.dart';
 
@@ -7,8 +8,12 @@ class SetlistPlayer extends StatelessWidget {
   final SetlistPlayerState state;
   final bool expanded;
   final Duration duration;
-  SetlistPlayer(
-      {required this.state, required this.expanded, required this.duration});
+  const SetlistPlayer({
+    Key? key,
+    required this.state,
+    required this.expanded,
+    required this.duration,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

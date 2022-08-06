@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/popups/selectPreset.dart';
 import 'package:mighty_plug_manager/audio/models/trackAutomation.dart';
+
 import '../automationController.dart';
 
 class PresetsPanel extends StatelessWidget {
@@ -10,11 +11,13 @@ class PresetsPanel extends StatelessWidget {
   final Function(AutomationEvent) onEditEvent;
   final Function onDelete;
   PresetsPanel(
-      {required this.onSelectedPreset,
+      {Key? key,
+      required this.onSelectedPreset,
       required this.automation,
       required this.onDelete,
       required this.onEditEvent,
-      required this.onDuplicateEvent});
+      required this.onDuplicateEvent})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -16,10 +16,10 @@ import 'effectSelector.dart';
 
 class ChannelSelector extends StatefulWidget {
   final NuxDevice device;
-  ChannelSelector({required this.device});
+  const ChannelSelector({Key? key, required this.device}) : super(key: key);
 
   @override
-  _ChannelSelectorState createState() => _ChannelSelectorState();
+  State<ChannelSelector> createState() => _ChannelSelectorState();
 }
 
 class _ChannelSelectorState extends State<ChannelSelector> {

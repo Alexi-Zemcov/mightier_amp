@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/widgets/numberPicker.dart';
+
 import '../automationController.dart';
 
 class LoopPanel extends StatelessWidget {
@@ -7,12 +8,13 @@ class LoopPanel extends StatelessWidget {
   final Function(bool?) onLoopEnable;
   final Function(bool) onUseLoopPoints;
   final Function(int) onLoopTimes;
-  LoopPanel({
+  const LoopPanel({
+    Key? key,
     required this.automation,
     required this.onLoopEnable,
     required this.onUseLoopPoints,
     required this.onLoopTimes,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

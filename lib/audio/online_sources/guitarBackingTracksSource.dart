@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:mighty_plug_manager/audio/online_sources/onlineSource.dart';
-import 'package:mighty_plug_manager/audio/online_sources/onlineTrack.dart';
 import 'package:html/parser.dart' as html;
 import 'package:http/http.dart' as http;
+import 'package:mighty_plug_manager/audio/online_sources/onlineSource.dart';
+import 'package:mighty_plug_manager/audio/online_sources/onlineTrack.dart';
 
 class GuitarBackingTracksSource extends OnlineSource {
   static const baseUrl = "https://www.guitarbackingtrack.com";
@@ -46,7 +46,7 @@ class GuitarBackingTracksSource extends OnlineSource {
   Future<List<String>> getSuggestions(String query) async {
     //build suggestion path
     query = query.split(' ')[0];
-    if (query.length > 0) {
+    if (query.isNotEmpty) {
       var url = "$baseUrl$suggestionsPath${query[0]}/$query.js";
       var result = await http.get(Uri.parse(url));
       if (result.statusCode == 200) {

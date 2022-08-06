@@ -23,7 +23,7 @@ class NuxMightyPlug extends NuxDevice {
   static const defaultNuxId = "mighty_plug_air";
   int get productVID => 48;
 
-  late PlugAirCommunication _communication = new PlugAirCommunication(this);
+  late final PlugAirCommunication _communication = PlugAirCommunication(this);
   DeviceCommunication get communication => _communication;
 
   PlugAirVersion version = PlugAirVersion.PlugAir21;

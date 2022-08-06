@@ -28,13 +28,14 @@ class NuxDiagnosticData {
   String lastNuxPreset = "";
 
   Map<String, dynamic> toMap(bool includeJsonPreset) {
-    var data = Map<String, dynamic>();
+    var data = <String, dynamic>{};
     data['device'] = device;
     data['connected'] = connected;
     data['lastNuxPreset'] = lastNuxPreset;
 
-    if (includeJsonPreset)
+    if (includeJsonPreset) {
       data['jsonPreset'] = NuxDeviceControl.instance().device.presetToJson();
+    }
 
     return data;
   }
@@ -58,7 +59,7 @@ class NuxDeviceControl extends ChangeNotifier {
 
   double _masterVolume = 100;
 
-  var changes = new ChangeStack();
+  var changes = ChangeStack();
 
   bool developer = false;
   Function(List<int>)? onDataReceiveDebug;
@@ -85,21 +86,24 @@ class NuxDeviceControl extends ChangeNotifier {
 
   List<String> deviceBLEName() {
     var names = <String>[];
-    for (int i = 0; i < _deviceInstances.length; i++)
+    for (int i = 0; i < _deviceInstances.length; i++) {
       names.addAll(_deviceInstances[i].productBLENames);
+    }
     return names;
   }
 
   List<String> get deviceNameList {
     var names = <String>[];
-    for (int i = 0; i < _deviceInstances.length; i++)
+    for (int i = 0; i < _deviceInstances.length; i++) {
       names.add(_deviceInstances[i].productNameShort);
+    }
     return names;
   }
 
   int get deviceIndex {
-    for (int i = 0; i < _deviceInstances.length; i++)
+    for (int i = 0; i < _deviceInstances.length; i++) {
       if (_device == _deviceInstances[i]) return i;
+    }
     return 0;
   }
 
@@ -115,8 +119,9 @@ class NuxDeviceControl extends ChangeNotifier {
 
   List<String> get deviceVersionsList {
     var names = <String>[];
-    for (int i = 0; i < device.getAvailableVersions(); i++)
+    for (int i = 0; i < device.getAvailableVersions(); i++) {
       names.add(device.getProductNameVersion(i));
+    }
     return names;
   }
 
@@ -129,9 +134,11 @@ class NuxDeviceControl extends ChangeNotifier {
   }
 
   NuxDevice deviceFromBLEId(String id) {
-    for (int i = 0; i < _deviceInstances.length; i++)
-      if (_deviceInstances[i].productBLENames.contains(id))
+    for (int i = 0; i < _deviceInstances.length; i++) {
+      if (_deviceInstances[i].productBLENames.contains(id)) {
         return _deviceInstances[i];
+      }
+    }
 
     //return plug/air by default
     return _deviceInstances[0];
@@ -139,8 +146,9 @@ class NuxDeviceControl extends ChangeNotifier {
 
   String getDeviceNameFromId(String id) {
     for (int i = 0; i < _deviceInstances.length; i++) {
-      if (_deviceInstances[i].productStringId == id)
+      if (_deviceInstances[i].productStringId == id) {
         return _deviceInstances[i].productNameShort;
+      }
     }
     return "Unknown";
   }
@@ -204,7 +212,7 @@ class NuxDeviceControl extends ChangeNotifier {
     switch (statusValue) {
       case MidiSetupStatus.deviceFound:
         // check if this is valid nux device
-        print("Devices found " + _midiHandler.nuxDevices.toString());
+        debugPrint("Devices found ${_midiHandler.nuxDevices}");
         _midiHandler.nuxDevices.forEach((dev) {
           if (dev.device.type != BluetoothDeviceType.classic) {
             //don't autoconnect on manual scan
@@ -268,10 +276,11 @@ class NuxDeviceControl extends ChangeNotifier {
   void requestFirmwareVersion() async {
     await Future.delayed(Duration(seconds: 1));
     var data = device.communication.createFirmwareMessage();
-    if (data.length > 0)
+    if (data.isNotEmpty) {
       _midiHandler.sendData(data);
-    else
+    } else {
       onFirmwareVersionReady();
+    }
   }
 
   void onFirmwareVersionReady() {
@@ -338,8 +347,8 @@ class NuxDeviceControl extends ChangeNotifier {
   }
 
   void slotSwappedListener(int slot) {
-    var proc =
-        device.getPreset(device.selectedChannel).getProcessorAtSlot(slot);
+    // var proc =
+    //     device.getPreset(device.selectedChannel).getProcessorAtSlot(slot);
     //TODO: send where the slot went (or maybe ALL slots?)
   }
 
@@ -349,14 +358,15 @@ class NuxDeviceControl extends ChangeNotifier {
 
   void sendFullPresetSettings() {
     if (!isConnected) return;
-    for (var i = 0; i < device.processorList.length; i++)
+    for (var i = 0; i < device.processorList.length; i++) {
       sendFullEffectSettings(i, false);
+    }
   }
 
   void sendFullEffectSettings(int slot, bool force) {
     if (!isConnected) return;
     var preset = device.getPreset(device.selectedChannel);
-    var effect;
+    Processor effect;
     int index;
     effect =
         preset.getEffectsForSlot(slot)[preset.getSelectedEffectForSlot(slot)];
@@ -404,10 +414,11 @@ class NuxDeviceControl extends ChangeNotifier {
     //implement master volume
     if (param.masterVolume) value *= (masterVolume * 0.01);
 
-    if (param.valueType == ValueType.db)
+    if (param.valueType == ValueType.db) {
       outVal = dbTo7Bit(value);
-    else
+    } else {
       outVal = percentageTo7Bit(value);
+    }
     var data = createCCMessage(param.midiCC, outVal);
     if (!returnOnly) _midiHandler.sendData(data);
     return data;

@@ -22,7 +22,7 @@ class NuxMightyPlugPro extends NuxDevice {
   // didn't contain device id. They were always for mighty plug/air
   static const defaultNuxId = "mighty_plug_air";
   int get productVID => 48;
-  late PlugProCommunication _communication = new PlugProCommunication(this);
+  late final PlugProCommunication _communication = PlugProCommunication(this);
   DeviceCommunication get communication => _communication;
 
   PlugProVersion version = PlugProVersion.PlugPro1;

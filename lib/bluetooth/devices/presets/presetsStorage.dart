@@ -1,12 +1,13 @@
 // (c) 2020-2021 Dian Iliev (Tuntorius)
 // This code is licensed under MIT license (see LICENSE.md for details)
 
-import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/NuxMightyPlugAir.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class PresetsStorage extends ChangeNotifier {
@@ -238,7 +239,7 @@ class PresetsStorage extends ChangeNotifier {
   }
 
   String? presetToJson(String category, String name) {
-    var finalData = Map<String, dynamic>();
+    var finalData = <String, dynamic>{};
     for (int i = 0; i < presetsData.length; i++) {
       if (presetsData[i]["category"] == category &&
           presetsData[i]["name"] == name) {
@@ -262,8 +263,8 @@ class PresetsStorage extends ChangeNotifier {
         presets.add(presetsData[i]);
       }
     }
-    if (presets.length > 0) {
-      var finalData = Map<String, dynamic>();
+    if (presets.isNotEmpty) {
+      var finalData = <String, dynamic>{};
       finalData["type"] = presetsMultiple;
       finalData["data"] = presets;
       return json.encode(finalData);

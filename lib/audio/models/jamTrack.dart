@@ -72,7 +72,7 @@ class JamTrack {
   }
 
   Map<String, dynamic> toJson() {
-    var data = Map<String, dynamic>();
+    var data = <String, dynamic>{};
     data["path"] = _path;
     data["name"] = _name;
     data["uuid"] = _uuid;

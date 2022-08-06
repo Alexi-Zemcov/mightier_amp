@@ -24,11 +24,13 @@ class PresetList extends StatefulWidget {
   final bool simplified;
   final bool noneOption;
   final String? customProductId;
-  PresetList(
-      {this.onTap,
+  const PresetList(
+      {Key? key,
+      this.onTap,
       this.simplified = false,
       this.noneOption = false,
-      this.customProductId});
+      this.customProductId})
+      : super(key: key);
   @override
   _PresetListState createState() => _PresetListState();
 }
@@ -404,7 +406,7 @@ class _PresetListState extends State<PresetList>
   void showContextMenu(
       Offset _position, dynamic item, List<PopupMenuEntry> _menu) {
     final RenderBox? overlay =
-        Overlay.of(context)!.context.findRenderObject() as RenderBox;
+        Overlay.of(context)?.context.findRenderObject() as RenderBox?;
     //open menu
     if (overlay != null) {
       var rect = RelativeRect.fromRect(
@@ -513,7 +515,7 @@ class _PresetListState extends State<PresetList>
   }
 
   Widget _buildList(BuildContext context) {
-    if (PresetsStorage().getCategories().length == 0)
+    if (PresetsStorage().getCategories().isEmpty)
       return Center(
           child: Text("Empty", style: Theme.of(context).textTheme.bodyText1));
     late Offset _position;

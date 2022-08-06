@@ -21,7 +21,8 @@ import '../thickSlider.dart';
 class EffectEditor extends StatefulWidget {
   final Preset preset;
   final int slot;
-  EffectEditor({required this.preset, required this.slot});
+  const EffectEditor({Key? key, required this.preset, required this.slot})
+      : super(key: key);
   @override
   _EffectEditorState createState() => _EffectEditorState();
 }
@@ -54,13 +55,16 @@ class _EffectEditorState extends State<EffectEditor> {
           case ValueType.tempo:
             var unit = SharedPrefs()
                 .getValue(SettingsKeys.timeUnit, TimeUnit.BPM.index);
-            if (unit == TimeUnit.BPM.index)
+            if (unit == TimeUnit.BPM.index) {
               return "${Parameter.percentageToBPM(val).toStringAsFixed(2)} BPM";
+            }
             return "${Parameter.percentageToTime(val).toStringAsFixed(2)} s";
           case ValueType.vibeMode:
-            if (val == 0)
+            if (val == 0) {
               return "Vibe";
-            else if (val.round() == 100) return "Chorus";
+            } else if (val.round() == 100) {
+              return "Chorus";
+            }
             return "";
           default:
             return "";
@@ -221,13 +225,13 @@ class _EffectEditorState extends State<EffectEditor> {
     var _selected = _preset.getSelectedEffectForSlot(_slot);
     List<Parameter> params = prc[_selected].parameters;
 
-    if (params.length > 0) {
+    if (params.isNotEmpty) {
       for (int i = 0; i < params.length; i++) {
         var widget;
-        if (params[i].valueType.index < ValueType.vibeMode.index)
+        if (params[i].valueType.index < ValueType.vibeMode.index) {
           widget = Flexible(
               fit: FlexFit.loose, child: createSlider(params[i], isPortrait));
-        else {
+        } else {
           widget = createModeControl(params[i]);
         }
         sliders.add(widget);

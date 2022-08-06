@@ -34,15 +34,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-  int _currentIndex = 0;
   late BuildContext dialogContext;
   late TabController controller;
-  final List<Widget> _tabs = [];
+  late final List<Widget> _tabs;
+  late Timer _timeout;
+
+  int _currentIndex = 0;
 
   bool isBottomDrawerOpen = false;
-
   bool connectionFailed = false;
-  late Timer _timeout;
   StateSetter? dialogSetState;
 
   @override
@@ -62,13 +62,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     super.initState();
 
     //add 5 pages widgets
-    _tabs.addAll([
+    _tabs = const [
       PresetEditor(),
       PresetList(),
       DrumEditor(),
       JamTracks(),
-      const Settings(),
-    ]);
+      Settings(),
+    ];
 
     controller = TabController(initialIndex: 0, length: 5, vsync: this)
       ..addListener(_tabControllerListener);
@@ -115,44 +115,46 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   onVolumeDragEnd: _onVolumeDragEnd,
                 )
               : null,
-          body: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              Row(
-                children: [
-                  if (layoutMode == LayoutMode.columns)
-                    AppDrawer(
-                      onSwitchPageIndex: _onTabBarSwitchIndex,
-                      currentIndex: _currentIndex,
-                      totalTabs: _tabs.length,
+          body: SizedBox(
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Row(
+                  children: [
+                    if (layoutMode == LayoutMode.columns)
+                      AppDrawer(
+                        onSwitchPageIndex: _onTabBarSwitchIndex,
+                        currentIndex: _currentIndex,
+                        totalTabs: _tabs.length,
+                        currentVolume: currentVolume,
+                        onVolumeChanged: _onVolumeChanged,
+                        onVolumeDragEnd: _onVolumeDragEnd,
+                      ),
+                    Expanded(
+                      child: layoutMode == LayoutMode.navBar
+                          ? TabBarView(
+                              physics: const NeverScrollableScrollPhysics(),
+                              controller: controller,
+                              children: _tabs,
+                            )
+                          : _tabs.elementAt(_currentIndex),
+                    ),
+                  ],
+                ),
+                if (layoutMode != LayoutMode.columns)
+                  BottomDrawer(
+                    isBottomDrawerOpen: isBottomDrawerOpen,
+                    onExpandChange: (val) => setState(() {
+                      isBottomDrawerOpen = val;
+                    }),
+                    child: VolumeSlider(
                       currentVolume: currentVolume,
                       onVolumeChanged: _onVolumeChanged,
                       onVolumeDragEnd: _onVolumeDragEnd,
                     ),
-                  Expanded(
-                    child: layoutMode == LayoutMode.navBar
-                        ? TabBarView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            controller: controller,
-                            children: _tabs,
-                          )
-                        : _tabs.elementAt(_currentIndex),
                   ),
-                ],
-              ),
-              if (layoutMode != LayoutMode.columns)
-                BottomDrawer(
-                  isBottomDrawerOpen: isBottomDrawerOpen,
-                  onExpandChange: (val) => setState(() {
-                    isBottomDrawerOpen = val;
-                  }),
-                  child: VolumeSlider(
-                    currentVolume: currentVolume,
-                    onVolumeChanged: _onVolumeChanged,
-                    onVolumeDragEnd: _onVolumeDragEnd,
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
           bottomNavigationBar: layoutMode == LayoutMode.navBar
               ? GestureDetector(
@@ -337,7 +339,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   LayoutMode _getLayoutMode(MediaQueryData mediaQuery) {
-    final isPortrait = mediaQuery.orientation == Orientation.portrait;
     final screenWidth = mediaQuery.size.width;
     debugPrint('Screen Width is: $screenWidth.');
     if (screenWidth >= 700) return LayoutMode.columns;

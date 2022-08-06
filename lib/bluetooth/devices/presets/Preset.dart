@@ -89,8 +89,9 @@ abstract class Preset {
   }
 
   bool payloadPiecesReady() {
-    for (int i = 0; i < nuxDataPieces.length; i++)
-      if (nuxDataPieces[i].length == 0) return false;
+    for (int i = 0; i < nuxDataPieces.length; i++) {
+      if (nuxDataPieces[i].isEmpty) return false;
+    }
     return true;
   }
 

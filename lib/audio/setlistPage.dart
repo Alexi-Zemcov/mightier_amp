@@ -46,7 +46,7 @@ class SetlistPlayerState extends ChangeNotifier {
   AutomationController? _automation;
 
   SetlistPlayerState({required this.setlist}) {
-    if (this.setlist.items.length > 0) openTrack(0);
+    if (setlist.items.isNotEmpty) openTrack(0);
   }
 
   Future openTrack(int index) async {
@@ -158,7 +158,8 @@ class SetlistPage extends StatefulWidget {
   final Setlist setlist;
   final bool readOnly;
 
-  SetlistPage({required this.setlist, required this.readOnly});
+  const SetlistPage({Key? key, required this.setlist, required this.readOnly})
+      : super(key: key);
   @override
   _SetlistPageState createState() => _SetlistPageState();
 }
@@ -266,13 +267,13 @@ class _SetlistPageState extends State<SetlistPage> {
   }
 
   void multiselectHandler(int index) {
-    if (selected.length == 0 || !selected.containsKey(index)) {
+    if (selected.isEmpty || !selected.containsKey(index)) {
       //fill it first if not created
       selected[index] = true;
       _multiselectMode = true;
     } else {
       selected.remove(index);
-      if (selected.length == 0) _multiselectMode = false;
+      if (selected.isEmpty) _multiselectMode = false;
     }
     setState(() {});
   }
@@ -341,7 +342,7 @@ class _SetlistPageState extends State<SetlistPage> {
                 selectedColor: Colors.white,
                 iconColor: Colors.white,
                 child: IndexedStack(
-                  index: widget.setlist.items.length > 0 ? 0 : 1,
+                  index: widget.setlist.items.isNotEmpty ? 0 : 1,
                   children: [
                     Theme(
                       data: Theme.of(context).copyWith(
@@ -480,7 +481,7 @@ class _SetlistPageState extends State<SetlistPage> {
                   ),
                 ),
               ),
-        bottomNavigationBar: widget.setlist.items.length == 0
+        bottomNavigationBar: widget.setlist.items.isEmpty
             ? null
             : GestureDetector(
                 onVerticalDragStart: (details) {

@@ -86,7 +86,7 @@ class TrackAutomation {
 
   TrackAutomation();
   fromJson(List<dynamic> jsonData) {
-    if (jsonData.length > 0)
+    if (jsonData.isNotEmpty)
       _initialEvent = AutomationEvent.fromJson(jsonData[0]);
 
     for (int i = 1; i < jsonData.length; i++)

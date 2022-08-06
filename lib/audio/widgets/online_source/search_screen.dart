@@ -3,16 +3,16 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mighty_plug_manager/UI/widgets/nestedWillPopScope.dart';
 import 'package:mighty_plug_manager/audio/online_sources/onlineSource.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:mighty_plug_manager/audio/online_sources/onlineTrack.dart';
 
 class OnlineSearchScreen extends StatefulWidget {
   final OnlineSource source;
 
-  OnlineSearchScreen({required this.source});
+  const OnlineSearchScreen({Key? key, required this.source}) : super(key: key);
 
   @override
   _OnlineSearchScreenState createState() => _OnlineSearchScreenState();
@@ -41,13 +41,13 @@ class _OnlineSearchScreenState extends State<OnlineSearchScreen> {
   }
 
   void multiselectHandler(int index) {
-    if (selected.length == 0 || !selected.containsKey(index)) {
+    if (selected.isEmpty || !selected.containsKey(index)) {
       //fill it first if not created
       selected[index] = true;
       _multiselectMode = true;
     } else {
       selected.remove(index);
-      if (selected.length == 0) _multiselectMode = false;
+      if (selected.isEmpty) _multiselectMode = false;
     }
     setState(() {});
   }
@@ -222,7 +222,7 @@ class _OnlineSearchScreenState extends State<OnlineSearchScreen> {
             ),
           ),
         ),
-        floatingActionButton: _multiselectMode && selected.length > 0
+        floatingActionButton: _multiselectMode && selected.isNotEmpty
             ? FloatingActionButton(
                 onPressed: () async {
                   List<OnlineTrack> sel = [];

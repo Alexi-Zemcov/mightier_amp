@@ -1,7 +1,7 @@
-import 'package:mighty_plug_manager/audio/online_sources/onlineSource.dart';
-import 'package:mighty_plug_manager/audio/online_sources/onlineTrack.dart';
 import 'package:html/parser.dart' as html;
 import 'package:http/http.dart' as http;
+import 'package:mighty_plug_manager/audio/online_sources/onlineSource.dart';
+import 'package:mighty_plug_manager/audio/online_sources/onlineTrack.dart';
 
 class BackingTracksCoSource extends OnlineSource {
   static const baseUrl = "https://www.backingtracks.co";
@@ -23,7 +23,7 @@ class BackingTracksCoSource extends OnlineSource {
       var songs = <OnlineTrack>[];
       var doc = html.parse(result.body);
       var results = doc.querySelectorAll("div.pl-in");
-      if (results.length > 0) {
+      if (results.isNotEmpty) {
         for (var i = 0; i < results.length; i++) {
           var item = results[i];
           var url = item.children[1].children[0].attributes['data-url'] ?? "";

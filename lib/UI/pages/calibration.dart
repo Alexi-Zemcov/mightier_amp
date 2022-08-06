@@ -10,6 +10,8 @@ import '../../bluetooth/NuxDeviceControl.dart';
 import '../../bluetooth/devices/presets/Preset.dart';
 
 class Calibration extends StatefulWidget {
+  const Calibration({Key? key}) : super(key: key);
+
   @override
   _CalibrationState createState() => _CalibrationState();
 }

@@ -319,7 +319,7 @@ abstract class NuxDevice extends ChangeNotifier {
   }
 
   void onDataReceived(List<int> data) {
-    assert(data.length > 0);
+    assert(data.isNotEmpty);
 
     switch (data[0] & 0xf0) {
       case MidiMessageValues.sysExStart:
@@ -492,7 +492,7 @@ abstract class NuxDevice extends ChangeNotifier {
 
     //parse all effects
     for (int i = 0; i < effectsChainLength; i++) {
-      var dev = Map<String, dynamic>();
+      var dev = <String, dynamic>{};
       dev["fx_type"] = p.getSelectedEffectForSlot(i);
       dev["enabled"] = p.slotEnabled(i);
       Processor fx;

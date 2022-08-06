@@ -20,7 +20,8 @@ class EffectSelector extends StatefulWidget {
   final Preset preset;
   final NuxDevice device;
 
-  EffectSelector({required this.preset, required this.device});
+  const EffectSelector({Key? key, required this.preset, required this.device})
+      : super(key: key);
   @override
   _EffectSelectorState createState() => _EffectSelectorState();
 }

@@ -84,14 +84,12 @@ class _SettingsState extends State<Settings> {
     return ListView(
       children: [
         if (kDebugMode)
-          SizedBox(
-            height: 150,
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return Text(items[index]);
-              },
-              itemCount: items.length,
-            ),
+          ListView.builder(
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Text(items[index]);
+            },
+            itemCount: items.length,
           ),
         ListTileTheme(
           iconColor: Colors.white,
@@ -304,7 +302,7 @@ class _SettingsState extends State<Settings> {
                       var btOn = midiHandler.bluetoothOn;
                       if (!btOn) {
                         return const ListTile(
-                          title: const Text("Please, turn bluetooth on!"),
+                          title: Text("Please, turn bluetooth on!"),
                         );
                       }
                       bool scanning = midiHandler.isScanning;

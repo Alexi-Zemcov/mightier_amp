@@ -10,7 +10,8 @@ class AlbumTracks extends StatefulWidget {
   final String albumId;
   final String artist;
 
-  AlbumTracks(this.albumName, this.albumId, this.artist);
+  const AlbumTracks(this.albumName, this.albumId, this.artist, {Key? key})
+      : super(key: key);
 
   @override
   _AlbumTracksState createState() => _AlbumTracksState();
@@ -31,13 +32,13 @@ class _AlbumTracksState extends State<AlbumTracks> {
   }
 
   void multiselectHandler(int index) {
-    if (selected.length == 0 || !selected.containsKey(index)) {
+    if (selected.isEmpty || !selected.containsKey(index)) {
       //fill it first if not created
       selected[index] = true;
       _multiselectMode = true;
     } else {
       selected.remove(index);
-      if (selected.length == 0) _multiselectMode = false;
+      if (selected.isEmpty) _multiselectMode = false;
     }
     setState(() {});
   }
@@ -120,7 +121,7 @@ class _AlbumTracksState extends State<AlbumTracks> {
             return Text("Loading...");
           },
         ),
-        floatingActionButton: _multiselectMode && selected.length > 0
+        floatingActionButton: _multiselectMode && selected.isNotEmpty
             ? FloatingActionButton(
                 onPressed: () {
                   List<SongInfo> sel = [];

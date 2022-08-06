@@ -12,7 +12,7 @@ import '../widgets/scrollPicker.dart';
 import '../widgets/thickSlider.dart';
 
 class DrumEditor extends StatefulWidget {
-  DrumEditor();
+  const DrumEditor({Key? key}) : super(key: key);
   @override
   _DrumEditorState createState() => _DrumEditorState();
 }

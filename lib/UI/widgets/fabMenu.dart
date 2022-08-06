@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
+
 import 'nestedWillPopScope.dart';
 
 class Bubble {
@@ -66,6 +66,7 @@ class _DefaultHeroTag {
 
 class FloatingActionBubble extends AnimatedWidget {
   const FloatingActionBubble({
+    Key? key,
     required this.items,
     required this.onPress,
     required this.iconColor,
@@ -76,7 +77,7 @@ class FloatingActionBubble extends AnimatedWidget {
     this.animatedIconData,
   })  : assert((iconData == null && animatedIconData != null) ||
             (iconData != null && animatedIconData == null)),
-        super(listenable: animation);
+        super(key: key, listenable: animation);
 
   final List<Bubble> items;
   final Function() onPress;
@@ -89,7 +90,6 @@ class FloatingActionBubble extends AnimatedWidget {
   get _animation => listenable;
 
   Widget buildItem(BuildContext context, int index) {
-    TextDirection textDirection = Directionality.of(context);
     final transform = Matrix4.translationValues(
       0,
       -(_animation.value - 1) * 40 * (items.length - index),

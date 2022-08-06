@@ -76,7 +76,7 @@ class ControllerHotkey {
   }
 
   Map<String, dynamic> toJson() {
-    var data = Map<String, dynamic>();
+    var data = <String, dynamic>{};
     data["name"] = hotkeyName;
     data["control"] = control.toString();
     data["code"] = hotkeyCode;
