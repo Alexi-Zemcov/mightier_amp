@@ -10,11 +10,17 @@ import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 import 'blinkWidget.dart';
 
 class NuxAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const NuxAppBar({Key? key}) : super(key: key);
+  final double? elevation;
+
+  const NuxAppBar({
+    this.elevation,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      elevation: elevation,
       title: const Text("Mightier Amp"),
       actions: [
         //battery percentage

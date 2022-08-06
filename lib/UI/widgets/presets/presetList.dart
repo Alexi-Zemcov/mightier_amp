@@ -48,7 +48,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Export All"),
+          const Text("Export All"),
         ],
       ),
     ),
@@ -61,7 +61,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Import"),
+          const Text("Import"),
         ],
       ),
     ),
@@ -78,7 +78,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Delete"),
+          const Text("Delete"),
         ],
       ),
     ),
@@ -91,7 +91,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Rename"),
+          const Text("Rename"),
         ],
       ),
     ),
@@ -104,7 +104,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Export Category"),
+          const Text("Export Category"),
         ],
       ),
     )
@@ -121,7 +121,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Delete"),
+          const Text("Delete"),
         ],
       ),
     ),
@@ -134,7 +134,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Change Channel"),
+          const Text("Change Channel"),
         ],
       ),
     ),
@@ -147,7 +147,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Change Category"),
+          const Text("Change Category"),
         ],
       ),
     ),
@@ -160,7 +160,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Rename"),
+          const Text("Rename"),
         ],
       ),
     ),
@@ -173,7 +173,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Duplicate"),
+          const Text("Duplicate"),
         ],
       ),
     ),
@@ -186,7 +186,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Export Preset"),
+          const Text("Export Preset"),
         ],
       ),
     ),
@@ -199,7 +199,7 @@ class _PresetListState extends State<PresetList>
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Export QR Code"),
+          const Text("Export QR Code"),
         ],
       ),
     ),
@@ -490,32 +490,34 @@ class _PresetListState extends State<PresetList>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Column(
-      children: [
-        if (!widget.simplified)
-          ListTile(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            contentPadding: EdgeInsets.only(left: 16, right: 12),
-            title: Text("Presets"),
-            trailing: PopupMenuButton(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 12.0, right: 4, bottom: 10, top: 10),
-                child: Icon(Icons.more_vert, color: Colors.grey),
+    return SafeArea(
+      child: ListView(
+        children: [
+          if (!widget.simplified)
+            ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              contentPadding: const EdgeInsets.only(left: 16, right: 12),
+              title: const Text("Presets"),
+              trailing: PopupMenuButton(
+                child: const Padding(
+                  padding: EdgeInsets.only(
+                      left: 12.0, right: 4, bottom: 10, top: 10),
+                  child: const Icon(Icons.more_vert, color: Colors.grey),
+                ),
+                itemBuilder: (context) {
+                  return presetsMenu;
+                },
+                onSelected: (pos) {
+                  mainMenuActions(pos);
+                },
               ),
-              itemBuilder: (context) {
-                return presetsMenu;
-              },
-              onSelected: (pos) {
-                mainMenuActions(pos);
-              },
             ),
-          ),
-        Expanded(
-          child: _buildList(context),
-        )
-      ],
+          Expanded(
+            child: _buildList(context),
+          )
+        ],
+      ),
     );
   }
 
@@ -572,9 +574,9 @@ class _PresetListState extends State<PresetList>
             trailingWidget = null;
           } else {
             var button = PopupMenuButton(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, right: 0, bottom: 10, top: 10),
+              child: const Padding(
+                padding:
+                    EdgeInsets.only(left: 16.0, right: 0, bottom: 10, top: 10),
                 child: Icon(Icons.more_vert, color: Colors.grey),
               ),
               itemBuilder: (context) {
@@ -589,7 +591,7 @@ class _PresetListState extends State<PresetList>
               trailingWidget = Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.circle,
                     color: Colors.blue,
                     size: 16,
@@ -656,7 +658,7 @@ class _PresetListState extends State<PresetList>
                       if (pVersion != devVersion)
                         Transform(
                           transform: Matrix4.translationValues(10, 10, 0),
-                          child: Icon(
+                          child: const Icon(
                             Icons.warning,
                             color: Colors.amber,
                             size: 20,
@@ -678,10 +680,10 @@ class _PresetListState extends State<PresetList>
           );
           return out;
         },
-        config: Config(
+        config: const Config(
             parentTextStyle: TextStyle(color: Colors.white),
             parentPaddingEdgeInsets: EdgeInsets.only(left: 16, right: 16),
-            childrenPaddingEdgeInsets: EdgeInsets.only(left: 0, right: 0),
+            childrenPaddingEdgeInsets: const EdgeInsets.only(left: 0, right: 0),
             arrowIcon: Icon(Icons.keyboard_arrow_down, color: Colors.white)),
       ),
     );
@@ -690,13 +692,13 @@ class _PresetListState extends State<PresetList>
       out = Column(
         children: [
           ListTile(
-            contentPadding: EdgeInsets.only(left: 16, right: 4),
-            leading: Icon(
+            contentPadding: const EdgeInsets.only(left: 16, right: 4),
+            leading: const Icon(
               Icons.close,
               color: Colors.white,
             ),
             title: Transform.translate(
-                offset: Offset(-16, 0), child: Text("None")),
+                offset: const Offset(-16, 0), child: const Text("None")),
             onTap: () {
               widget.onTap?.call(false);
             },

@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'thickSlider.dart';
 
-const kBottomDrawerHeight = _kBottomDrawerPickHeight +
-    _kBottomDrawerHiddenHeight +
-    _kBottomDrawerHiddenPadding * 2;
-
 const _kBottomDrawerPickHeight = 50.0;
 const _kBottomDrawerHiddenHeight = 60.0;
 const _kBottomDrawerHiddenPadding = 8.0;

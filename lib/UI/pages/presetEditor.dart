@@ -63,125 +63,133 @@ class _PresetEditorState extends State<PresetEditor> {
     bool uploadPresetEnabled =
         device.deviceControl.isConnected && device.presetSaveSupport;
 
-    return ListView(
-      children: [
-        Column(
-          children: [
-            ButtonTheme(
-              minWidth: 45,
-              height: 45,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      MaterialButton(
-                        onPressed: NuxDeviceControl.instance().changes.canUndo
-                            ? () {
-                                var changes =
-                                    NuxDeviceControl.instance().changes;
-                                if (changes.canUndo) changes.undo();
-                                setState(() {});
-                              }
-                            : null,
-                        color: Colors.blue,
-                        child: const Icon(Icons.undo),
-                        //padding: EdgeInsets.zero,
-                      ),
-                      MaterialButton(
-                        onPressed: NuxDeviceControl.instance().changes.canRedo
-                            ? () {
-                                var changes =
-                                    NuxDeviceControl.instance().changes;
-                                if (changes.canRedo) changes.redo();
-                                setState(() {});
-                              }
-                            : null,
-                        color: Colors.blue,
-                        child: const Icon(Icons.redo),
-                        //padding: EdgeInsets.zero,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      ToggleButtons(
-                        constraints: const BoxConstraints(
-                            minWidth: 55,
-                            maxWidth: 55,
-                            minHeight: 45,
-                            maxHeight: 45),
-                        isSelected: [
-                          !NuxDeviceControl.instance().changes.canUndo
-                        ],
-                        selectedBorderColor: Colors.transparent,
-                        borderColor: Colors.blue,
-                        borderRadius: BorderRadius.circular(3),
-                        color: Colors.white,
-                        fillColor: Colors.blue,
-                        disabledColor: Colors.grey,
-                        onPressed:
-                            NuxDeviceControl.instance().changes.canUndo ||
-                                    NuxDeviceControl.instance().changes.canRedo
-                                ? (val) {
-                                    var changes =
-                                        NuxDeviceControl.instance().changes;
-                                    if (changes.canUndo) {
-                                      //we can go back (that's bad though)
-                                      while (changes.canUndo) {
-                                        changes.undo();
-                                      }
-                                    } else {
-                                      while (changes.canRedo) {
-                                        changes.redo();
-                                      }
+    return SafeArea(
+      child: ListView(
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ButtonTheme(
+                minWidth: 45,
+                height: 45,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        MaterialButton(
+                          onPressed: NuxDeviceControl.instance().changes.canUndo
+                              ? () {
+                                  var changes =
+                                      NuxDeviceControl.instance().changes;
+                                  if (changes.canUndo) changes.undo();
+                                  setState(() {});
+                                }
+                              : null,
+                          color: Colors.blue,
+                          child: const Icon(Icons.undo),
+                          //padding: EdgeInsets.zero,
+                        ),
+                        MaterialButton(
+                          onPressed: NuxDeviceControl.instance().changes.canRedo
+                              ? () {
+                                  var changes =
+                                      NuxDeviceControl.instance().changes;
+                                  if (changes.canRedo) changes.redo();
+                                  setState(() {});
+                                }
+                              : null,
+                          color: Colors.blue,
+                          child: const Icon(Icons.redo),
+                          //padding: EdgeInsets.zero,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ToggleButtons(
+                          constraints: const BoxConstraints(
+                              minWidth: 55,
+                              maxWidth: 55,
+                              minHeight: 45,
+                              maxHeight: 45),
+                          isSelected: [
+                            !NuxDeviceControl.instance().changes.canUndo
+                          ],
+                          selectedBorderColor: Colors.transparent,
+                          borderColor: Colors.blue,
+                          borderRadius: BorderRadius.circular(3),
+                          color: Colors.white,
+                          fillColor: Colors.blue,
+                          disabledColor: Colors.grey,
+                          onPressed: NuxDeviceControl.instance()
+                                      .changes
+                                      .canUndo ||
+                                  NuxDeviceControl.instance().changes.canRedo
+                              ? (val) {
+                                  var changes =
+                                      NuxDeviceControl.instance().changes;
+                                  if (changes.canUndo) {
+                                    //we can go back (that's bad though)
+                                    while (changes.canUndo) {
+                                      changes.undo();
                                     }
-                                    setState(() {});
+                                  } else {
+                                    while (changes.canRedo) {
+                                      changes.redo();
+                                    }
                                   }
-                                : null,
-                        children: [const Icon(Icons.compare)],
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          MaterialButton(
-                            color: Colors.blue,
-                            onPressed: !uploadPresetEnabled
-                                ? null
-                                : savePresetToDevice,
-                            child: const Icon(Icons.save_alt),
-                          ),
-                          const SizedBox(
-                            width: 2,
-                          ),
-                          MaterialButton(
-                            color: Colors.blue,
-                            child: const Icon(Icons.playlist_add),
-                            onPressed: () {
-                              var saveDialog = SavePresetDialog(
-                                  device: device, confirmColor: Colors.blue);
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    saveDialog.buildDialog(device, context),
-                              );
-                            },
-                          )
-                        ],
-                      ),
-                    ],
-                  )
-                ],
+                                  setState(() {});
+                                }
+                              : null,
+                          children: [const Icon(Icons.compare)],
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            MaterialButton(
+                              color: Colors.blue,
+                              onPressed: !uploadPresetEnabled
+                                  ? null
+                                  : savePresetToDevice,
+                              child: const Icon(Icons.save_alt),
+                            ),
+                            const SizedBox(
+                              width: 2,
+                            ),
+                            MaterialButton(
+                              color: Colors.blue,
+                              child: const Icon(Icons.playlist_add),
+                              onPressed: () {
+                                var saveDialog = SavePresetDialog(
+                                    device: device, confirmColor: Colors.blue);
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      saveDialog.buildDialog(device, context),
+                                );
+                              },
+                            )
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-        ChannelSelector(device: device)
-      ],
+            ],
+          ),
+          ChannelSelector(device: device)
+        ],
+      ),
     );
   }
 }

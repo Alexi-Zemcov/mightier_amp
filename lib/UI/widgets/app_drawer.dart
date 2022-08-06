@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/mightier_icons.dart';
+import 'package:mighty_plug_manager/UI/widgets/nux_app_bar.dart';
 import 'package:mighty_plug_manager/UI/widgets/volume_drawer.dart';
 
 final _tiles = <TileModel>[
@@ -40,53 +41,56 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _DrawerTile(
-                    tileIndex: 0,
-                    onSwitchPageIndex: widget.onSwitchPageIndex,
-                    currentIndex: widget.currentIndex,
-                  ),
-                  _DrawerTile(
-                    tileIndex: 1,
-                    onSwitchPageIndex: widget.onSwitchPageIndex,
-                    currentIndex: widget.currentIndex,
-                  ),
-                  _DrawerTile(
-                    tileIndex: 2,
-                    onSwitchPageIndex: widget.onSwitchPageIndex,
-                    currentIndex: widget.currentIndex,
-                  ),
-                  _DrawerTile(
-                    tileIndex: 3,
-                    onSwitchPageIndex: widget.onSwitchPageIndex,
-                    currentIndex: widget.currentIndex,
-                  ),
-                  _DrawerTile(
-                    tileIndex: 4,
-                    onSwitchPageIndex: widget.onSwitchPageIndex,
-                    currentIndex: widget.currentIndex,
-                  ),
-                ],
+      child: SafeArea(
+        child: Column(
+          children: [
+            const NuxAppBar(elevation: 0),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _DrawerTile(
+                      tileIndex: 0,
+                      onSwitchPageIndex: widget.onSwitchPageIndex,
+                      currentIndex: widget.currentIndex,
+                    ),
+                    _DrawerTile(
+                      tileIndex: 1,
+                      onSwitchPageIndex: widget.onSwitchPageIndex,
+                      currentIndex: widget.currentIndex,
+                    ),
+                    _DrawerTile(
+                      tileIndex: 2,
+                      onSwitchPageIndex: widget.onSwitchPageIndex,
+                      currentIndex: widget.currentIndex,
+                    ),
+                    _DrawerTile(
+                      tileIndex: 3,
+                      onSwitchPageIndex: widget.onSwitchPageIndex,
+                      currentIndex: widget.currentIndex,
+                    ),
+                    _DrawerTile(
+                      tileIndex: 4,
+                      onSwitchPageIndex: widget.onSwitchPageIndex,
+                      currentIndex: widget.currentIndex,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          BottomDrawer(
-            isBottomDrawerOpen: isBottomDrawerOpen,
-            onExpandChange: (val) => setState(() {
-              isBottomDrawerOpen = val;
-            }),
-            child: VolumeSlider(
-              currentVolume: widget.currentVolume,
-              onVolumeChanged: widget.onVolumeChanged,
-              onVolumeDragEnd: widget.onVolumeDragEnd,
+            BottomDrawer(
+              isBottomDrawerOpen: isBottomDrawerOpen,
+              onExpandChange: (val) => setState(() {
+                isBottomDrawerOpen = val;
+              }),
+              child: VolumeSlider(
+                currentVolume: widget.currentVolume,
+                onVolumeChanged: widget.onVolumeChanged,
+                onVolumeDragEnd: widget.onVolumeDragEnd,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
