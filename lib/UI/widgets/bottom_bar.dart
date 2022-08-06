@@ -8,10 +8,14 @@ class BottomBar extends StatefulWidget {
   final void Function(int) onTap;
   final int index;
 
-  BottomBar({required this.index, required this.onTap});
+  const BottomBar({
+    Key? key,
+    required this.index,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
-  _BottomBarState createState() => _BottomBarState();
+  State<BottomBar> createState() => _BottomBarState();
 }
 
 class _BottomBarState extends State<BottomBar> {
@@ -19,10 +23,10 @@ class _BottomBarState extends State<BottomBar> {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
         currentIndex: widget.index,
-        onTap: (int _index) {
-          widget.onTap(_index);
+        onTap: (int index) {
+          widget.onTap(index);
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(MightierIcons.sliders),
             label: "Editor",

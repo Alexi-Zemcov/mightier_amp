@@ -19,10 +19,10 @@ import 'UI/pages/presetEditor.dart';
 import 'UI/pages/settings.dart';
 import 'UI/popups/alertDialogs.dart';
 import 'UI/theme.dart';
-import 'UI/widgets/NuxAppBar.dart' as NuxAppBar;
 import 'UI/widgets/VolumeDrawer.dart';
-import 'UI/widgets/bottomBar.dart';
+import 'UI/widgets/bottom_bar.dart';
 import 'UI/widgets/nestedWillPopScope.dart';
+import 'UI/widgets/nux_app_bar.dart' as nuxAppBar;
 import 'UI/widgets/presets/presetList.dart';
 import 'bluetooth/NuxDeviceControl.dart';
 import 'bluetooth/bleMidiHandler.dart';
@@ -106,22 +106,23 @@ class _AppState extends State<App> {
     return MaterialApp(
       title: 'Mightier Amp',
       theme: getTheme(),
-      home: HomePage(),
+      home: Home(),
       navigatorKey: navigatorKey,
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class Home extends StatefulWidget {
   final BLEMidiHandler handler = BLEMidiHandler();
   final MidiControllerManager midiMan = MidiControllerManager();
 
-  HomePage({Key? key}) : super(key: key);
+  Home({Key? key}) : super(key: key);
+
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _HomeState extends State<Home> with TickerProviderStateMixin {
   int _currentIndex = 0;
   late BuildContext dialogContext;
   late TabController controller;
@@ -291,6 +292,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // TODO(zemcov): replace to the screenWidth checker.
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
     //WARNING: Workaround for a flutter bug - if the app is started with screen off,
@@ -308,14 +310,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: NestedWillPopScope(
         onWillPop: _willPopCallback,
         child: Scaffold(
-          appBar: NuxAppBar.getAppBar(widget.handler),
-          body: Stack(
-            alignment: Alignment.bottomCenter,
+          appBar: nuxAppBar.getAppBar(widget.handler),
+          body: Column(
             children: [
-              TabBarView(
-                children: _children,
-                physics: NeverScrollableScrollPhysics(),
-                controller: controller,
+              Expanded(
+                child: TabBarView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: controller,
+                  children: _children,
+                ),
               ),
               VolumeDrawer(
                   expanded: openDrawer,
@@ -323,78 +326,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   onExpandChange: (val) => openDrawer = val)
             ],
           ),
-          /*drawer: Drawer(
-            child: ListView(
-              children: [
-                Text("Mightier Amp"),
-                Divider(),
-                ListTile(
-                  title: Text("Style editor"),
-                  onTap: () {
-                    setTab(0);
-                  },
-                ),
-                ListTile(
-                  title: Text("Presets"),
-                  onTap: () {
-                    setTab(1);
-                  },
-                ),
-                ListTile(
-                  title: Text("Drums"),
-                  onTap: () {
-                    setTab(2);
-                  },
-                ),
-                ListTile(
-                  title: Text("Jam Tracks"),
-                  onTap: () {
-                    setTab(3);
-                  },
-                ),
-                ListTile(
-                  title: Text("Settings"),
-                  onTap: () {
-                    setTab(4);
-                  },
-                ),
-              ],
-            ),
-          ),*/
-          drawer: isPortrait
-              ? null
-              : SafeArea(
-                  child: Drawer(
-                      child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [const DrawerHeader(child: Text("Mightier Amp"))],
-                  )),
-                ),
           bottomNavigationBar: !isPortrait
               ? null
               : GestureDetector(
-                  onVerticalDragUpdate: (details) {
-                    if (details.delta.dy < 0) {
-                      //open
-                      openDrawer = true;
-                    } else {
-                      //close
-                      openDrawer = false;
-                    }
-                    setState(() {});
-                  },
+                  onVerticalDragUpdate: _onBottomBarSwipe,
                   child: BottomBar(
                     index: _currentIndex,
-                    onTap: (_index) {
-                      setState(() {
-                        _currentIndex = _index;
-                        controller.animateTo(_currentIndex);
-                      });
-                    },
+                    onTap: onBottomBarTap,
                   ),
                 ),
         ),
       ),
     );
+  }
+
+  void _onBottomBarSwipe(details) {
+    if (details.delta.dy < 0) {
+      //open
+      openDrawer = true;
+    } else {
+      //close
+      openDrawer = false;
+    }
+    setState(() {});
+  }
+
+  void onBottomBarTap(index) {
+    setState(() {
+      _currentIndex = index;
+      controller.animateTo(_currentIndex);
+    });
   }
 }
