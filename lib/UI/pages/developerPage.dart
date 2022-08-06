@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/widgets/nestedWillPopScope.dart';
 import 'package:mighty_plug_manager/UI/widgets/numberPicker.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/bluetooth/bleMidiHandler.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 
 enum midiMessage { ccMessage, sysExMessage }
 

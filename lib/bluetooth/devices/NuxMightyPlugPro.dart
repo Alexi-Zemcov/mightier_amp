@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 
 import '../../UI/mightier_icons.dart';
-import '../NuxDeviceControl.dart';
+import '../nux_device_control.dart';
 import 'NuxConstants.dart';
 import 'NuxDevice.dart';
 import 'communication/communication.dart';
@@ -21,22 +21,33 @@ class NuxMightyPlugPro extends NuxDevice {
   //this is used in conversion of very old format of presets which
   // didn't contain device id. They were always for mighty plug/air
   static const defaultNuxId = "mighty_plug_air";
+  @override
   int get productVID => 48;
   late final PlugProCommunication _communication = PlugProCommunication(this);
+  @override
   DeviceCommunication get communication => _communication;
 
   PlugProVersion version = PlugProVersion.PlugPro1;
 
+  @override
   String get productName => "NUX Mighty Plug Pro";
+  @override
   String get productNameShort => "Mighty Plug Pro";
+  @override
   String get productStringId => "mighty_plug_pro";
+  @override
   int get productVersion => version.index;
+  @override
   IconData get productIcon => MightierIcons.amp_plugair;
+  @override
   List<String> get productBLENames => ["MIGHTY PLUG PRO"];
 
+  @override
   int get channelsCount => 7;
+  @override
   int get effectsChainLength => 9;
   int get groupsCount => 1;
+  @override
   int get amplifierSlotIndex {
     var preset = getPreset(selectedChannel);
     for (int i = 0; i < processorList.length; i++)
@@ -45,7 +56,9 @@ class NuxMightyPlugPro extends NuxDevice {
     return 3;
   }
 
+  @override
   bool get cabinetSupport => true;
+  @override
   int get cabinetSlotIndex {
     var preset = getPreset(selectedChannel);
     for (int i = 0; i < processorList.length; i++)
@@ -54,15 +67,22 @@ class NuxMightyPlugPro extends NuxDevice {
     return 4;
   }
 
+  @override
   bool get presetSaveSupport => false;
+  @override
   bool get reorderableFXChain => true;
+  @override
   bool get advancedSettingsSupport => false;
+  @override
   bool get batterySupport => false;
+  @override
   int get channelChangeCC => MidiCCValues.bCC_CtrlType;
 
   //TODO: might be different
+  @override
   int get deviceQRId => 6;
 
+  @override
   List<ProcessorInfo> get processorList => _processorList;
 
   final List<ProcessorInfo> _processorList = [
@@ -140,9 +160,9 @@ class NuxMightyPlugPro extends NuxDevice {
 
   NuxMightyPlugPro(NuxDeviceControl devControl) : super(devControl) {
     //get channel names
-    PlugProChannel.values.forEach((element) {
+    for (var element in PlugProChannel.values) {
       channelNames.add(element.toString().split('.')[1]);
-    });
+    }
 
     //clean
     presets.add(PlugProPreset(
@@ -176,12 +196,15 @@ class NuxMightyPlugPro extends NuxDevice {
     presets.add(PlugProPreset(
         device: this, channel: PlugProChannel.Funk.index, channelName: "7"));
 
-    for (var preset in presets)
+    for (var preset in presets) {
       (preset as PlugProPreset).setFirmwareVersion(version.index);
+    }
   }
 
+  @override
   List<String> getDrumStyles() => drumStyles;
 
+  @override
   List<Preset> getPresetsList() {
     return presets;
   }

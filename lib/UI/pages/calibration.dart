@@ -6,8 +6,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:mighty_plug_manager/UI/widgets/nestedWillPopScope.dart';
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 
-import '../../bluetooth/NuxDeviceControl.dart';
 import '../../bluetooth/devices/presets/Preset.dart';
+import '../../bluetooth/nux_device_control.dart';
 
 class Calibration extends StatefulWidget {
   const Calibration({Key? key}) : super(key: key);

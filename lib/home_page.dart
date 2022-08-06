@@ -7,7 +7,7 @@ import 'package:mighty_plug_manager/UI/widgets/app_drawer.dart';
 import 'package:mighty_plug_manager/midi/MidiControllerManager.dart';
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 
-import 'UI/pages/drumEditor.dart';
+import 'UI/pages/drum_editor.dart';
 import 'UI/pages/jamTracks.dart';
 //pages
 import 'UI/pages/presetEditor.dart';
@@ -19,8 +19,8 @@ import 'UI/widgets/nestedWillPopScope.dart';
 import 'UI/widgets/nux_app_bar.dart';
 import 'UI/widgets/presets/presetList.dart';
 import 'UI/widgets/volume_drawer.dart';
-import 'bluetooth/NuxDeviceControl.dart';
 import 'bluetooth/bleMidiHandler.dart';
+import 'bluetooth/nux_device_control.dart';
 
 enum LayoutMode { navBar, drawer, columns }
 
@@ -229,7 +229,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     switch (event) {
       case DeviceConnectionState.connectedStart:
         if (dialogSetState != null) break;
-        print("just connected");
+        debugPrint("just connected");
         connectionFailed = false;
         showDialog(
           context: context,
@@ -279,10 +279,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
         break;
       case DeviceConnectionState.presetsLoaded:
-        print("presets loaded");
+        debugPrint("presets loaded");
         break;
       case DeviceConnectionState.configReceived:
-        print("config loaded");
+        debugPrint("config loaded");
         dialogSetState = null;
         _timeout.cancel();
         Navigator.pop(context);

@@ -2,6 +2,7 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
+    - lib/
     - audio_picker/**
     - flutter_audio_query/**
     - flutter_blue/**

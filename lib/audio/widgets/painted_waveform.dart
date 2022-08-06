@@ -19,7 +19,7 @@ class PaintedWaveform extends StatefulWidget {
   final AutomationController automation;
   final Function(double, double) onTimingData;
 
-  PaintedWaveform(
+  const PaintedWaveform(
       {Key? key,
       required this.sampleData,
       required this.onWaveformTap,
@@ -60,8 +60,8 @@ class _PaintedWaveformState extends State<PaintedWaveform> {
     double fitted = endPosition * _scale;
 
     _offset = canvasSize - fitted;
-    print(_scale);
-    print(_offset);
+    debugPrint(_scale.toString());
+    debugPrint(_offset.toString());
     layoutBuilt = true;
   }
 
@@ -242,7 +242,7 @@ class _PaintedWaveformState extends State<PaintedWaveform> {
                       automation: widget.automation,
                       showType: widget.showType,
                       overallWaveform: true,
-                      color: Color(0xff3994DB),
+                      color: const Color(0xff3994DB),
                     ),
                   ),
                 ),
@@ -267,7 +267,7 @@ class _PaintedWaveformState extends State<PaintedWaveform> {
                       overallWaveform: false,
                       automation: widget.automation,
                       showType: widget.showType,
-                      color: Color(0xff3994DB),
+                      color: const Color(0xff3994DB),
                     ),
                   ),
                 ),

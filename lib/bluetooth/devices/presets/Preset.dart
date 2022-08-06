@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:convert/convert.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 import 'package:qr_utils/qr_utils.dart';
 
 import '../NuxConstants.dart';

@@ -1,4 +1,4 @@
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 
 import '../ControllerConstants.dart';
 

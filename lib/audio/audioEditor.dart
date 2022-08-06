@@ -4,15 +4,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mighty_plug_manager/UI/theme.dart';
 import 'package:mighty_plug_manager/UI/widgets/nestedWillPopScope.dart';
 import 'package:mighty_plug_manager/audio/automationController.dart';
 import 'package:mighty_plug_manager/audio/widgets/presetsPanel.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/NuxDevice.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 import 'package:page_view_indicators/circle_page_indicator.dart';
 
@@ -85,7 +84,7 @@ class _AudioEditorState extends State<AudioEditor> {
       if (controller.page == null) return;
       double p = controller.page!;
       if (p == p.round()) {
-        print(p.round());
+        debugPrint(p.round().toString());
         switch (p.round()) {
           case 0:
             showType = AutomationEventType.preset;
@@ -155,7 +154,7 @@ class _AudioEditorState extends State<AudioEditor> {
     if (event.eventTime > subtract)
       event.eventTime -= subtract;
     else
-      event.eventTime = Duration(milliseconds: 0);
+      event.eventTime = const Duration(milliseconds: 0);
 
     automation.sortEvents();
     setState(() {});
@@ -221,218 +220,216 @@ class _AudioEditorState extends State<AudioEditor> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Song editor"),
+          title: const Text("Song editor"),
         ),
-        body: Container(
-          child: Column(children: [
-            Expanded(
-                flex: 3,
-                child: Stack(
-                  children: [
-                    PaintedWaveform(
-                      sampleData: wfData,
-                      currentSample: currentSample,
-                      automation: automation,
-                      onTimingData: timingData,
-                      showType: showEventType(),
-                      onEventSelectionChanged: () {
-                        setState(() {});
-                      },
-                      onWaveformTap: (sample) {
-                        switch (state) {
-                          case EditorState.play:
-                            playFrom(sample);
-                            break;
-                          case EditorState.insert:
-                            setState(() {
-                              state = EditorState.play;
-                              automation.addEvent(
-                                  Duration(milliseconds: sampleToMs(sample)),
-                                  AutomationEventType.preset)
-                                ..setPresetUuid(selectedPreset["uuid"]);
-                            });
-                            break;
-                          case EditorState.duplicateInsert:
-                            if (duplicatedEvent == null) break;
-                            setState(() {
-                              state = EditorState.play;
-                              automation.addEventFromOther(duplicatedEvent!,
-                                  Duration(milliseconds: sampleToMs(sample)));
-                            });
-                            break;
-                          case EditorState.insertLoop1:
-                            setState(() {
-                              state = EditorState.insertLoop2;
-                              automation.addEvent(
-                                  Duration(milliseconds: sampleToMs(sample)),
-                                  AutomationEventType.loop);
-                            });
-                            break;
-                          case EditorState.insertLoop2:
-                            setState(() {
-                              state = EditorState.play;
-                              automation.useLoopPoints = true;
-                              automation.addEvent(
-                                  Duration(milliseconds: sampleToMs(sample)),
-                                  AutomationEventType.loop);
-                            });
-                            break;
-                        }
-                      },
-                    ),
-                    if (state != EditorState.play)
-                      ColoredBox(
-                          color: Colors.grey[700]!,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Tap here to insert event",
-                            ),
-                          ))
-                  ],
-                  alignment: Alignment.center,
-                )),
-            //Playback controls
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                MaterialButton(
-                  onPressed: () {
-                    automation.rewind();
-                    setState(() {
-                      currentSample = 0;
-                    });
-                  },
-                  height: 70,
-                  child: Icon(
-                    Icons.skip_previous,
-                    color: Colors.white,
-                    size: 50,
+        body: Column(children: [
+          Expanded(
+              flex: 3,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  PaintedWaveform(
+                    sampleData: wfData,
+                    currentSample: currentSample,
+                    automation: automation,
+                    onTimingData: timingData,
+                    showType: showEventType(),
+                    onEventSelectionChanged: () {
+                      setState(() {});
+                    },
+                    onWaveformTap: (sample) {
+                      switch (state) {
+                        case EditorState.play:
+                          playFrom(sample);
+                          break;
+                        case EditorState.insert:
+                          setState(() {
+                            state = EditorState.play;
+                            automation
+                                .addEvent(
+                                    Duration(milliseconds: sampleToMs(sample)),
+                                    AutomationEventType.preset)
+                                .setPresetUuid(selectedPreset["uuid"]);
+                          });
+                          break;
+                        case EditorState.duplicateInsert:
+                          if (duplicatedEvent == null) break;
+                          setState(() {
+                            state = EditorState.play;
+                            automation.addEventFromOther(duplicatedEvent!,
+                                Duration(milliseconds: sampleToMs(sample)));
+                          });
+                          break;
+                        case EditorState.insertLoop1:
+                          setState(() {
+                            state = EditorState.insertLoop2;
+                            automation.addEvent(
+                                Duration(milliseconds: sampleToMs(sample)),
+                                AutomationEventType.loop);
+                          });
+                          break;
+                        case EditorState.insertLoop2:
+                          setState(() {
+                            state = EditorState.play;
+                            automation.useLoopPoints = true;
+                            automation.addEvent(
+                                Duration(milliseconds: sampleToMs(sample)),
+                                AutomationEventType.loop);
+                          });
+                          break;
+                      }
+                    },
                   ),
+                  if (state != EditorState.play)
+                    ColoredBox(
+                        color: Colors.grey[700]!,
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Tap here to insert event",
+                          ),
+                        ))
+                ],
+              )),
+          //Playback controls
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              MaterialButton(
+                onPressed: () {
+                  automation.rewind();
+                  setState(() {
+                    currentSample = 0;
+                  });
+                },
+                height: 70,
+                child: const Icon(
+                  Icons.skip_previous,
+                  color: Colors.white,
+                  size: 50,
                 ),
-                MaterialButton(
-                  onPressed: () {
-                    automation.playPause();
-                  },
-                  height: 70,
-                  child: Icon(
-                    automation.playerState.playing == false ||
-                            automation.playerState.processingState ==
-                                ProcessingState.completed
-                        ? Icons.play_arrow
-                        : Icons.pause,
-                    color: Colors.white,
-                    size: 50,
-                  ),
+              ),
+              MaterialButton(
+                onPressed: () {
+                  automation.playPause();
+                },
+                height: 70,
+                child: Icon(
+                  automation.playerState.playing == false ||
+                          automation.playerState.processingState ==
+                              ProcessingState.completed
+                      ? Icons.play_arrow
+                      : Icons.pause,
+                  color: Colors.white,
+                  size: 50,
                 ),
-                MaterialButton(
-                  onPressed: stepLeft, //move event left
-                  height: 70,
-                  child: Icon(
-                    Icons.chevron_left,
-                    color: Colors.white,
-                    size: 60,
-                  ),
+              ),
+              MaterialButton(
+                onPressed: stepLeft, //move event left
+                height: 70,
+                child: const Icon(
+                  Icons.chevron_left,
+                  color: Colors.white,
+                  size: 60,
                 ),
-                MaterialButton(
-                  onPressed: stepRight, //move event left
-                  height: 70,
-                  child: Icon(
-                    Icons.chevron_right,
-                    color: Colors.white,
-                    size: 60,
-                  ),
+              ),
+              MaterialButton(
+                onPressed: stepRight, //move event left
+                height: 70,
+                child: const Icon(
+                  Icons.chevron_right,
+                  color: Colors.white,
+                  size: 60,
                 ),
-              ],
-            ),
-            Expanded(
-                flex: 2,
-                child: IndexedStack(
-                  index: state == EditorState.play ? 0 : 1,
-                  alignment: Alignment.center,
-                  children: [
-                    PageView(
-                      controller: controller,
-                      onPageChanged: (int index) {
-                        _currentPageNotifier.value = index;
+              ),
+            ],
+          ),
+          Expanded(
+              flex: 2,
+              child: IndexedStack(
+                index: state == EditorState.play ? 0 : 1,
+                alignment: Alignment.center,
+                children: [
+                  PageView(
+                    controller: controller,
+                    onPageChanged: (int index) {
+                      _currentPageNotifier.value = index;
 
-                        //clear selected event
-                        automation.selectedEvent = null;
-                      },
-                      children: [
-                        PresetsPanel(
-                            automation: automation,
-                            onDelete: () {
-                              if (automation.selectedEvent != null)
-                                automation
-                                    .removeEvent(automation.selectedEvent!);
-                              setState(() {});
-                            },
-                            onEditEvent: editEvent,
-                            onDuplicateEvent: duplicateEvent,
-                            onSelectedPreset: (_preset) {
-                              setState(() {
-                                selectedPreset = _preset;
-                                state = EditorState.insert;
-                              });
-                            }),
-                        LoopPanel(
+                      //clear selected event
+                      automation.selectedEvent = null;
+                    },
+                    children: [
+                      PresetsPanel(
                           automation: automation,
-                          onUseLoopPoints: useLoopPoints,
-                          onLoopEnable: (value) {
-                            setState(() {
-                              automation.loopEnable = value ?? false;
-                            });
+                          onDelete: () {
+                            if (automation.selectedEvent != null)
+                              automation.removeEvent(automation.selectedEvent!);
+                            setState(() {});
                           },
-                          onLoopTimes: (value) {
+                          onEditEvent: editEvent,
+                          onDuplicateEvent: duplicateEvent,
+                          onSelectedPreset: (_preset) {
                             setState(() {
-                              automation.loopTimes = value;
+                              selectedPreset = _preset;
+                              state = EditorState.insert;
                             });
-                          },
-                        ),
-                        SpeedPanel(
-                          semitones: automation.pitch,
-                          speed: automation.speed,
-                          onSpeedChanged: (_speed) {
-                            setState(() {
-                              automation.speed = _speed;
-                              automation.setSpeed(_speed);
-                            });
-                          },
-                          onSemitonesChanged: (_semitones) {
-                            setState(() {
-                              automation.pitch = _semitones;
-                              automation.setPitch(_semitones);
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    ElevatedButton(
-                      child: Text("Cancel"),
-                      onPressed: () {
-                        if (state == EditorState.insertLoop1 ||
-                            state == EditorState.insertLoop2)
-                          automation.removeAllLoopEvents();
+                          }),
+                      LoopPanel(
+                        automation: automation,
+                        onUseLoopPoints: useLoopPoints,
+                        onLoopEnable: (value) {
+                          setState(() {
+                            automation.loopEnable = value ?? false;
+                          });
+                        },
+                        onLoopTimes: (value) {
+                          setState(() {
+                            automation.loopTimes = value;
+                          });
+                        },
+                      ),
+                      SpeedPanel(
+                        semitones: automation.pitch,
+                        speed: automation.speed,
+                        onSpeedChanged: (_speed) {
+                          setState(() {
+                            automation.speed = _speed;
+                            automation.setSpeed(_speed);
+                          });
+                        },
+                        onSemitonesChanged: (_semitones) {
+                          setState(() {
+                            automation.pitch = _semitones;
+                            automation.setPitch(_semitones);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  ElevatedButton(
+                    child: const Text("Cancel"),
+                    onPressed: () {
+                      if (state == EditorState.insertLoop1 ||
+                          state == EditorState.insertLoop2)
+                        automation.removeAllLoopEvents();
 
-                        state = EditorState.play;
-                        setState(() {});
-                      },
-                    )
-                  ],
-                )),
-            Container(
-              height: 30,
-              alignment: Alignment.center,
-              child: state != EditorState.play
-                  ? null
-                  : CirclePageIndicator(
-                      itemCount: 3,
-                      currentPageNotifier: _currentPageNotifier,
-                    ),
-            )
-          ]),
-        ),
+                      state = EditorState.play;
+                      setState(() {});
+                    },
+                  )
+                ],
+              )),
+          Container(
+            height: 30,
+            alignment: Alignment.center,
+            child: state != EditorState.play
+                ? null
+                : CirclePageIndicator(
+                    itemCount: 3,
+                    currentPageNotifier: _currentPageNotifier,
+                  ),
+          )
+        ]),
       ),
     );
   }

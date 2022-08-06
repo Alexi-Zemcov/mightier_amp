@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 
 import '../../UI/mightier_icons.dart';
-import '../NuxDeviceControl.dart';
+import '../nux_device_control.dart';
 import 'NuxConstants.dart';
 import 'NuxDevice.dart';
 import 'communication/communication.dart';
@@ -111,7 +111,7 @@ class NuxMighty2040BT extends NuxDevice {
   List<Preset> presets1 = <Preset>[];
   List<Preset> presets2 = <Preset>[];
 
-  List<String> _channelNames = [];
+  final List<String> _channelNames = [];
 
   final List<String> drumStyles = [
     "Metronome",
@@ -135,9 +135,9 @@ class NuxMighty2040BT extends NuxDevice {
 
   NuxMighty2040BT(NuxDeviceControl devControl) : super(devControl) {
     //get channel names
-    M2040BTChannel.values.forEach((element) {
+    for (var element in M2040BTChannel.values) {
       _channelNames.add(element.toString().split('.')[1]);
-    });
+    }
 
     //clean
     presets1.add(MXXBTPreset(

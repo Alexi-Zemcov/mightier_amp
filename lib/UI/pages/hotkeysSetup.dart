@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/popups/hotkeyInput.dart';
 import 'package:mighty_plug_manager/UI/popups/midiControlInfo.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/effects/Processor.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/presets/Preset.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 import 'package:mighty_plug_manager/midi/ControllerConstants.dart';
 import 'package:mighty_plug_manager/midi/MidiControllerManager.dart';
 import 'package:mighty_plug_manager/midi/controllers/MidiController.dart';

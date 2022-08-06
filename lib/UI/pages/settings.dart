@@ -8,9 +8,9 @@ import 'package:mighty_plug_manager/UI/popups/alertDialogs.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wakelock/wakelock.dart';
 
-import '../../bluetooth/NuxDeviceControl.dart';
 import '../../bluetooth/bleMidiHandler.dart';
 import '../../bluetooth/devices/NuxDevice.dart';
+import '../../bluetooth/nux_device_control.dart';
 import '../../platform/simpleSharedPrefs.dart';
 import '../widgets/deviceList.dart';
 import 'DebugConsolePage.dart';
@@ -323,29 +323,29 @@ class _SettingsState extends State<Settings> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               ElevatedButton(
-                                child: const Text("Scan"),
                                 onPressed: connected || scanning
                                     ? null
                                     : () {
                                         midiHandler.startScanning(true);
                                       },
+                                child: const Text("Scan"),
                               ),
                               ElevatedButton(
-                                child: const Text("Stop Scanning"),
                                 onPressed: connected || !scanning
                                     ? null
                                     : () {
                                         midiHandler.stopScanning();
                                       },
+                                child: const Text("Stop Scanning"),
                               ),
                               ElevatedButton(
-                                child: const Text("Disconnect"),
                                 onPressed: !connected
                                     ? null
                                     : () {
                                         midiHandler.disconnectDevice();
                                         setState(() {});
                                       },
+                                child: const Text("Disconnect"),
                               ),
                             ],
                           )

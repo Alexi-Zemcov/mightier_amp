@@ -9,7 +9,7 @@ import 'package:mighty_plug_manager/bluetooth/devices/communication/communicatio
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 import 'package:qr_utils/qr_utils.dart';
 
-import '../NuxDeviceControl.dart';
+import '../nux_device_control.dart';
 import "NuxConstants.dart";
 import 'effects/Processor.dart';
 import 'presets/Preset.dart';

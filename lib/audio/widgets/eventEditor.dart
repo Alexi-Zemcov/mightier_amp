@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/popups/selectPreset.dart';
 import 'package:mighty_plug_manager/UI/widgets/thickSlider.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/presets/Preset.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/presets/presetsStorage.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 
 import '../models/trackAutomation.dart';
 
@@ -98,7 +98,7 @@ class EventEditor {
                     if (cab)
                       ListTile(
                         enabled: event.cabinetLevelOverrideEnable,
-                        title: Container(
+                        title: SizedBox(
                           height: 50,
                           width: 1,
                           child: ThickSlider(

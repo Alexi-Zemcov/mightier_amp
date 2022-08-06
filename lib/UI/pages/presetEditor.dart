@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/popups/alertDialogs.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 
 import '../../bluetooth/devices/NuxDevice.dart';
 import '../popups/savePreset.dart';

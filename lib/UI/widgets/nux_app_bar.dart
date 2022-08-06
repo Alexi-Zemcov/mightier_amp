@@ -4,8 +4,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/bluetooth/bleMidiHandler.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 
 import 'blinkWidget.dart';
 

@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/popups/alertDialogs.dart';
 import 'package:mighty_plug_manager/UI/popups/exportQRCode.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 import 'package:mighty_plug_manager/platform/fileSaver.dart';
 import 'package:qr_utils/qr_utils.dart';
 
@@ -36,7 +36,7 @@ class _ChannelSelectorState extends State<ChannelSelector> {
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Scan QR"),
+          const Text("Scan QR"),
         ],
       ),
     ),
@@ -49,7 +49,7 @@ class _ChannelSelectorState extends State<ChannelSelector> {
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Import QR Image"),
+          const Text("Import QR Image"),
         ],
       ),
     ),
@@ -62,7 +62,7 @@ class _ChannelSelectorState extends State<ChannelSelector> {
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Share QR"),
+          const Text("Share QR"),
         ],
       ),
     ),
@@ -88,7 +88,7 @@ class _ChannelSelectorState extends State<ChannelSelector> {
       var col = i == widget.device.selectedChannel
           ? _presets[widget.device.selectedChannel].channelColor
           : disColor;
-      var button = Container(
+      var button = SizedBox(
         width: width,
         height: AppThemeConfig.toggleButtonHeight(isPortrait, vpHeight),
         child: InkWell(
@@ -172,7 +172,7 @@ class _ChannelSelectorState extends State<ChannelSelector> {
         content: Text(
           message,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white, fontSize: 20),
+          style: const TextStyle(color: Colors.white, fontSize: 20),
         )));
   }
 
@@ -197,32 +197,33 @@ class _ChannelSelectorState extends State<ChannelSelector> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 PopupMenuButton(
-                    itemBuilder: (context) {
-                      return qrMenu;
-                    },
-                    child: Container(
-                      width: 60,
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.qr_code_2,
-                            size: 32,
-                          ),
-                          Text("QR Code")
-                        ],
-                      ),
+                  itemBuilder: (context) {
+                    return qrMenu;
+                  },
+                  onSelected: qrPopupSelection,
+                  child: SizedBox(
+                    width: 60,
+                    child: Column(
+                      children: const [
+                        Icon(
+                          Icons.qr_code_2,
+                          size: 32,
+                        ),
+                        Text("QR Code")
+                      ],
                     ),
-                    onSelected: qrPopupSelection),
+                  ),
+                ),
                 Expanded(
                   child: Container(
-                    constraints: BoxConstraints(minHeight: 70),
+                    constraints: const BoxConstraints(minHeight: 70),
                     color: Colors.grey[900],
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         return Wrap(
-                          children: getButtons(constraints.maxWidth),
                           alignment: WrapAlignment.center,
                           runAlignment: WrapAlignment.center,
+                          children: getButtons(constraints.maxWidth),
                         );
                       },
                     ),
@@ -233,7 +234,7 @@ class _ChannelSelectorState extends State<ChannelSelector> {
                     widget.device
                         .toggleChannelActive(widget.device.selectedChannel);
                   },
-                  child: Container(
+                  child: SizedBox(
                     width: 60,
                     child: Column(
                       children: [
@@ -244,7 +245,7 @@ class _ChannelSelectorState extends State<ChannelSelector> {
                               : Icons.circle_outlined,
                           size: 30,
                         ),
-                        Text("Active")
+                        const Text("Active")
                       ],
                     ),
                   ),

@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/pages/settings.dart';
 import 'package:mighty_plug_manager/UI/popups/alertDialogs.dart';
 import 'package:mighty_plug_manager/UI/widgets/ModeControl.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/NuxConstants.dart';
 import 'package:mighty_plug_manager/bluetooth/devices/effects/plug_air/Cabinet.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 import 'package:tinycolor2/tinycolor2.dart';
 import 'package:undo/undo.dart';
@@ -138,22 +138,22 @@ class _EffectEditorState extends State<EffectEditor> {
               .desaturate(80)
               .darken(15)
               .color,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(15.0),
+      shape: const CircleBorder(),
+      child: const Padding(
+        padding: EdgeInsets.all(10.0),
         child: Text(
           "Tap",
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
       ),
-      padding: EdgeInsets.all(15.0),
-      shape: CircleBorder(),
     );
   }
 
   Widget createCabinetRename(Cabinet cab) {
     return Column(
       children: [
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -167,15 +167,15 @@ class _EffectEditorState extends State<EffectEditor> {
                     _dev.renameCabinet(cab.nuxIndex, value);
                   });
                 },
-                icon: Icon(Icons.drive_file_rename_outline),
-                label: Text("Rename Cabinet")),
+                icon: const Icon(Icons.drive_file_rename_outline),
+                label: const Text("Rename Cabinet")),
             ElevatedButton.icon(
                 onPressed: () {
                   var _dev = NuxDeviceControl.instance().device;
                   _dev.renameCabinet(cab.nuxIndex, cab.cabName);
                 },
-                icon: Icon(Icons.restart_alt),
-                label: Text("Reset Name"))
+                icon: const Icon(Icons.restart_alt),
+                label: const Text("Reset Name"))
           ],
         ),
         InkWell(
@@ -185,11 +185,11 @@ class _EffectEditorState extends State<EffectEditor> {
                 ? await launch(_url)
                 : throw 'Could not launch $_url';
           },
-          child: Container(
+          child: SizedBox(
             height: 50,
             child: Center(
               child: RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                 style: TextStyle(fontSize: 18),
                 children: [
                   TextSpan(text: "Use "),
@@ -227,7 +227,7 @@ class _EffectEditorState extends State<EffectEditor> {
 
     if (params.isNotEmpty) {
       for (int i = 0; i < params.length; i++) {
-        var widget;
+        Widget widget;
         if (params[i].valueType.index < ValueType.vibeMode.index) {
           widget = Flexible(
               fit: FlexFit.loose, child: createSlider(params[i], isPortrait));

@@ -6,7 +6,7 @@ import 'package:mighty_plug_manager/bluetooth/devices/communication/communicatio
 import 'package:mighty_plug_manager/bluetooth/devices/communication/plugAirCommunication.dart';
 
 import '../../UI/mightier_icons.dart';
-import '../NuxDeviceControl.dart';
+import '../nux_device_control.dart';
 import 'NuxConstants.dart';
 import 'NuxDevice.dart';
 import 'effects/Processor.dart';
@@ -21,34 +21,54 @@ class NuxMightyPlug extends NuxDevice {
   //this is used in conversion of very old format of presets which
   // didn't contain device id. They were always for mighty plug/air
   static const defaultNuxId = "mighty_plug_air";
+  @override
   int get productVID => 48;
 
   late final PlugAirCommunication _communication = PlugAirCommunication(this);
+  @override
   DeviceCommunication get communication => _communication;
 
   PlugAirVersion version = PlugAirVersion.PlugAir21;
 
+  @override
   String get productName => "NUX Mighty Plug/Air";
+  @override
   String get productNameShort => "Mighty Plug/Air";
+  @override
   String get productStringId => "mighty_plug_air";
+  @override
   int get productVersion => version.index;
+  @override
   IconData get productIcon => MightierIcons.amp_plugair;
+  @override
   List<String> get productBLENames =>
       ["NUX MIGHTY PLUG MIDI", "NUX MIGHTY AIR MIDI"];
 
+  @override
   int get channelsCount => 7;
+  @override
   int get effectsChainLength => 7;
   int get groupsCount => 1;
+  @override
   int get amplifierSlotIndex => 2;
+  @override
   bool get cabinetSupport => true;
+  @override
   int get cabinetSlotIndex => 3;
+  @override
   bool get presetSaveSupport => true;
+  @override
   bool get reorderableFXChain => false;
+  @override
   bool get advancedSettingsSupport => true;
+  @override
   bool get batterySupport => true;
+  @override
   int get channelChangeCC => MidiCCValues.bCC_CtrlType;
+  @override
   int get deviceQRId => 6;
 
+  @override
   List<ProcessorInfo> get processorList => _processorList;
 
   final List<ProcessorInfo> _processorList = [
@@ -117,9 +137,9 @@ class NuxMightyPlug extends NuxDevice {
 
   NuxMightyPlug(NuxDeviceControl devControl) : super(devControl) {
     //get channel names
-    PlugAirChannel.values.forEach((element) {
+    for (var element in PlugAirChannel.values) {
       channelNames.add(element.toString().split('.')[1]);
-    });
+    }
 
     //clean
     guitarPresets.add(PlugAirPreset(
@@ -160,8 +180,10 @@ class NuxMightyPlug extends NuxDevice {
       (preset as PlugAirPreset).setFirmwareVersion(version.index);
   }
 
+  @override
   List<String> getDrumStyles() => drumStyles;
 
+  @override
   List<Preset> getPresetsList() {
     return presets;
   }

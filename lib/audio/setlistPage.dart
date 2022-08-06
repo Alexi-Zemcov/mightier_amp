@@ -4,7 +4,7 @@ import 'package:mighty_plug_manager/UI/popups/selectTrack.dart';
 import 'package:mighty_plug_manager/UI/theme.dart';
 import 'package:mighty_plug_manager/UI/widgets/nestedWillPopScope.dart';
 import 'package:mighty_plug_manager/audio/automationController.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 
 import 'models/setlist.dart';
 import 'trackdata/trackData.dart';
@@ -16,7 +16,7 @@ class SetlistPlayerState extends ChangeNotifier {
   PlayerState state = PlayerState.idle;
   Setlist setlist;
   int currentTrack = 0;
-  Duration currentPosition = Duration(seconds: 0);
+  Duration currentPosition = const Duration(seconds: 0);
   bool _autoAdvance = true;
   bool _inPositionUpdateMode = false;
 
@@ -69,22 +69,23 @@ class SetlistPlayerState extends ChangeNotifier {
   }
 
   Future playPause() async {
-    print("PlayPause");
+    debugPrint("PlayPause");
     if (_automation == null) await openTrack(currentTrack);
     await _automation?.playPause();
-    if (_automation!.player.playerState.playing == false)
+    if (_automation!.player.playerState.playing == false) {
       state = PlayerState.pause;
-    else
+    } else {
       state = PlayerState.play;
-    print(state);
+    }
+    debugPrint(state.toString());
     notifyListeners();
   }
 
   void previous() async {
     if (_automation == null) return;
-    if (currentTrack == 0 || _automation!.player.position.inSeconds > 2)
+    if (currentTrack == 0 || _automation!.player.position.inSeconds > 2) {
       _automation!.rewind();
-    else if (currentTrack > 0) {
+    } else if (currentTrack > 0) {
       await closeTrack();
       currentTrack--;
       await openTrack(currentTrack);
@@ -120,7 +121,7 @@ class SetlistPlayerState extends ChangeNotifier {
   }
 
   Duration getDuration() {
-    return _automation?.duration ?? Duration(seconds: 0);
+    return _automation?.duration ?? const Duration(seconds: 0);
   }
 
   void setPosition(int positionMS) {
@@ -136,15 +137,16 @@ class SetlistPlayerState extends ChangeNotifier {
 
   void _onTrackComplete() async {
     await closeTrack();
-    currentPosition = Duration(milliseconds: 0);
+    currentPosition = const Duration(milliseconds: 0);
     if (currentTrack < setlist.items.length - 1) {
       currentTrack++;
       await openTrack(currentTrack);
       if (_autoAdvance) {
         await play();
         state = PlayerState.play;
-      } else
+      } else {
         state = PlayerState.pause;
+      }
     } else {
       await openTrack(currentTrack);
       currentTrack = 0;
@@ -173,7 +175,7 @@ class _SetlistPageState extends State<SetlistPage> {
 
   //multiselection stuff
   bool _multiselectMode = false;
-  Offset dragStart = Offset(0, 0);
+  Offset dragStart = const Offset(0, 0);
   Map<int, bool> selected = {};
 
   var popupSubmenu = <PopupMenuEntry>[
@@ -186,7 +188,7 @@ class _SetlistPageState extends State<SetlistPage> {
             color: AppThemeConfig.contextMenuIconColor,
           ),
           const SizedBox(width: 5),
-          Text("Remove"),
+          const Text("Remove"),
         ],
       ),
     )
@@ -246,11 +248,12 @@ class _SetlistPageState extends State<SetlistPage> {
     ).then((value) {
       if (value == null) return;
       if (value is List) {
-        value.forEach((element) {
+        for (var element in value) {
           widget.setlist.addTrack(element);
-        });
-      } else
+        }
+      } else {
         widget.setlist.addTrack(value);
+      }
 
       TrackData().saveSetlists();
       setState(() {});
@@ -286,18 +289,18 @@ class _SetlistPageState extends State<SetlistPage> {
 
   Widget? createTrailingWidget(BuildContext context, int index) {
     if (widget.readOnly) return null;
-    if (_multiselectMode)
+    if (_multiselectMode) {
       return Icon(
         selected.containsKey(index)
             ? Icons.check_circle
             : Icons.brightness_1_outlined,
         color: selected.containsKey(index) ? null : Colors.grey[800],
       );
+    }
 
     return PopupMenuButton(
-      child: Padding(
-        padding:
-            const EdgeInsets.only(left: 12.0, right: 4, bottom: 10, top: 10),
+      child: const Padding(
+        padding: EdgeInsets.only(left: 12.0, right: 4, bottom: 10, top: 10),
         child: Icon(Icons.more_vert, color: Colors.grey),
       ),
       itemBuilder: (context) {
@@ -338,7 +341,7 @@ class _SetlistPageState extends State<SetlistPage> {
             fit: StackFit.expand,
             children: [
               ListTileTheme(
-                selectedTileColor: Color.fromARGB(255, 9, 51, 116),
+                selectedTileColor: const Color.fromARGB(255, 9, 51, 116),
                 selectedColor: Colors.white,
                 iconColor: Colors.white,
                 child: IndexedStack(
@@ -373,19 +376,19 @@ class _SetlistPageState extends State<SetlistPage> {
                                   children: [
                                     if (!widget.readOnly && !_multiselectMode)
                                       ReorderableDragStartListener(
+                                        index: index,
                                         child: InkWell(
-                                          child: Container(
+                                          child: SizedBox(
                                             width:
                                                 AppThemeConfig.dragHandlesWidth,
                                             height: 48,
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.drag_handle,
                                               color: Colors.grey,
                                               size: 24,
                                             ),
                                           ),
                                         ),
-                                        index: index,
                                       ),
                                     Expanded(
                                       child: ListTile(
@@ -489,14 +492,15 @@ class _SetlistPageState extends State<SetlistPage> {
                 },
                 onVerticalDragUpdate: (details) {
                   Offset delta = details.globalPosition - dragStart;
-                  if (delta.dy < -expandThreshold && !playerExpanded)
+                  if (delta.dy < -expandThreshold && !playerExpanded) {
                     setState(() {
                       playerExpanded = true;
                     });
-                  else if (delta.dy > expandThreshold && playerExpanded)
+                  } else if (delta.dy > expandThreshold && playerExpanded) {
                     setState(() {
                       playerExpanded = false;
                     });
+                  }
                 },
                 onTap: () {
                   //expand only

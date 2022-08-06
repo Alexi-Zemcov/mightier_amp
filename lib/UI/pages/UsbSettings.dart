@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:mighty_plug_manager/UI/popups/alertDialogs.dart';
 
-import '../../bluetooth/NuxDeviceControl.dart';
+import '../../bluetooth/nux_device_control.dart';
 
 class UsbSettings extends StatefulWidget {
   const UsbSettings({Key? key}) : super(key: key);

@@ -12,7 +12,7 @@ import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'UI/theme.dart';
-import 'bluetooth/NuxDeviceControl.dart';
+import 'bluetooth/nux_device_control.dart';
 //recreate this file with your own api keys
 import 'configKeys.dart';
 

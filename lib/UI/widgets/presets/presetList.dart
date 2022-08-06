@@ -10,10 +10,10 @@ import 'package:tinycolor2/tinycolor2.dart';
 
 import '../../../UI/popups/alertDialogs.dart';
 import '../../../UI/popups/changeCategory.dart';
-import '../../../bluetooth/NuxDeviceControl.dart';
 import '../../../bluetooth/devices/NuxDevice.dart';
 import '../../../bluetooth/devices/presets/Preset.dart';
 import '../../../bluetooth/devices/presets/presetsStorage.dart';
+import '../../../bluetooth/nux_device_control.dart';
 import '../../../platform/fileSaver.dart';
 import '../../mightier_icons.dart';
 import '../../theme.dart';
@@ -213,8 +213,9 @@ class _PresetListState extends State<PresetList>
       case 1: //export category
         String? data = PresetsStorage().presetsToJson();
 
-        if (data != null)
+        if (data != null) {
           saveFileString("application/octet-stream", "presets.nuxpreset", data);
+        }
         break;
       case 2: //import
         openFileString("application/octet-stream").then((value) {
@@ -274,9 +275,10 @@ class _PresetListState extends State<PresetList>
           case 2: //export category
             String? data = PresetsStorage().presetsToJson(item);
 
-            if (data != null)
+            if (data != null) {
               saveFileString(
                   "application/octet-stream", "$item.nuxpreset", data);
+            }
         }
       } else {
         //preset
@@ -285,8 +287,9 @@ class _PresetListState extends State<PresetList>
             bool inUse = TrackData().isPresetInUse(item["uuid"]);
             String description =
                 "Are you sure you want to delete ${item["name"]}?";
-            if (inUse)
+            if (inUse) {
               description += "\n\nThe preset is used in one or more Jamtracks!";
+            }
 
             AlertDialogs.showConfirmDialog(context,
                 title: "Confirm",
@@ -332,8 +335,9 @@ class _PresetListState extends State<PresetList>
                 NuxDeviceControl.instance().getDeviceFromId(item["product_id"]);
 
             if (d != null) {
-              for (int i = 0; i < d.channelsCount; i++)
+              for (int i = 0; i < d.channelsCount; i++) {
                 channelList.add(d.channelName(i));
+              }
               var dialog = AlertDialogs.showOptionDialog(context,
                   confirmButton: "Change",
                   cancelButton: "Cancel",
@@ -365,9 +369,10 @@ class _PresetListState extends State<PresetList>
             String? data =
                 PresetsStorage().presetToJson(item["category"], item["name"]);
 
-            if (data != null)
+            if (data != null) {
               saveFileString("application/octet-stream",
                   "${item["name"]}.nuxpreset", data);
+            }
             break;
           case 5: //change category
             var categoryDialog = ChangeCategoryDialog(
@@ -429,9 +434,9 @@ class _PresetListState extends State<PresetList>
     PresetsStorage().addListener(refreshPresets);
 
     //cache devices
-    NuxDeviceControl.instance().deviceList.forEach((element) {
+    for (var element in NuxDeviceControl.instance().deviceList) {
       devices[element.productStringId] = element;
-    });
+    }
   }
 
   @override
@@ -466,9 +471,9 @@ class _PresetListState extends State<PresetList>
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ));
-          } else if (pi.keyName == "cabinet")
+          } else if (pi.keyName == "cabinet") {
             continue;
-          else {
+          } else {
             bool enabled = preset[pi.keyName]["enabled"];
             widgets.add(Icon(
               pi.icon,
@@ -515,9 +520,10 @@ class _PresetListState extends State<PresetList>
   }
 
   Widget _buildList(BuildContext context) {
-    if (PresetsStorage().getCategories().isEmpty)
+    if (PresetsStorage().getCategories().isEmpty) {
       return Center(
           child: Text("Empty", style: Theme.of(context).textTheme.bodyText1));
+    }
     late Offset _position;
 
     Widget out = GestureDetector(
@@ -549,10 +555,11 @@ class _PresetListState extends State<PresetList>
           //check if enabled and desaturate color if needed
 
           bool enabled = true;
-          if (widget.customProductId == null)
+          if (widget.customProductId == null) {
             enabled = item["product_id"] == device.productStringId;
-          else
+          } else {
             enabled = item["product_id"] == widget.customProductId;
+          }
 
           Color color = Preset.channelColors[item["channel"]];
           if (!enabled) color = TinyColor(color).desaturate(90).color;
@@ -561,9 +568,9 @@ class _PresetListState extends State<PresetList>
 
           //create trailing widget based on whether the preset is new
           Widget? trailingWidget;
-          if (widget.simplified)
+          if (widget.simplified) {
             trailingWidget = null;
-          else {
+          } else {
             var button = PopupMenuButton(
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -593,8 +600,9 @@ class _PresetListState extends State<PresetList>
                   button
                 ],
               );
-            } else
+            } else {
               trailingWidget = button;
+            }
           }
           var out = ChildBuilderInfo();
           out.hasNewItems = newItem;
@@ -609,27 +617,30 @@ class _PresetListState extends State<PresetList>
                 //selected: selected && !widget.simplified ? 255 : 0;,
                 onTap: () {
                   //remove the new marker if exists
-                  if (!widget.simplified)
+                  if (!widget.simplified) {
                     PresetsStorage()
                         .clearNewFlag(item["category"], item["name"]);
+                  }
 
-                  if (widget.onTap != null)
+                  if (widget.onTap != null) {
                     widget.onTap!(item);
-                  else {
+                  } else {
                     var dev = NuxDeviceControl.instance().device;
-                    if (dev.isPresetSupported(item))
+                    if (dev.isPresetSupported(item)) {
                       NuxDeviceControl.instance()
                           .device
                           .presetFromJson(item, null);
+                    }
                   }
                   setState(() {});
                 },
                 onLongPress: () {
-                  if (!widget.simplified)
+                  if (!widget.simplified) {
                     showContextMenu(_position, item, popupSubmenu);
+                  }
                 },
                 minLeadingWidth: 0,
-                leading: Container(
+                leading: SizedBox(
                   height:
                       double.infinity, //strange hack to center icon vertically
                   child: Stack(

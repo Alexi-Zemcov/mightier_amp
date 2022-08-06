@@ -1,13 +1,13 @@
 // (c) 2020-2021 Dian Iliev (Tuntorius)
 // This code is licensed under MIT license (see LICENSE.md for details)
 
-import 'dart:math' as Math;
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../bluetooth/NuxDeviceControl.dart';
 import '../../bluetooth/devices/NuxDevice.dart';
 import '../../bluetooth/devices/utilities/DelayTapTimer.dart';
+import '../../bluetooth/nux_device_control.dart';
 import '../widgets/scrollPicker.dart';
 import '../widgets/thickSlider.dart';
 
@@ -52,10 +52,11 @@ class _DrumEditorState extends State<DrumEditor> {
     Orientation orientation = MediaQuery.of(context).orientation;
     var height = 3;
     if (orientation == Orientation.portrait) {
-      if (MediaQuery.of(context).size.height < 640)
+      if (MediaQuery.of(context).size.height < 640) {
         height = 4;
-      else
+      } else {
         height = 5;
+      }
     }
 
     double padding = isPortrait ? 0 : MediaQuery.of(context).size.width * 0.25;
@@ -76,27 +77,26 @@ class _DrumEditorState extends State<DrumEditor> {
                           Border.all(color: Theme.of(context).disabledColor),
                       borderRadius: BorderRadius.circular(6)),
               height: ScrollPicker.itemHeight * height,
-              child: Container(
-                child: ScrollPicker(
-                  showDivider: false,
-                  remoteChange: remoteDrumStyleChange,
-                  initialValue: selectedDrumPattern,
-                  items: device.getDrumStyles(),
-                  onChanged: (value) {
+              child: ScrollPicker(
+                showDivider: false,
+                remoteChange: remoteDrumStyleChange,
+                initialValue: selectedDrumPattern,
+                items: device.getDrumStyles(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedDrumPattern = value;
+                  });
+                },
+                onChangedFinal: (value, remote) {
+                  if (remote) {
+                    remoteDrumStyleChange = false;
+                  } else {
                     setState(() {
-                      selectedDrumPattern = value;
+                      device.setDrumsStyle(value);
+                      device.setDrumsTempo(device.drumsTempo);
                     });
-                  },
-                  onChangedFinal: (value, remote) {
-                    if (remote)
-                      remoteDrumStyleChange = false;
-                    else
-                      setState(() {
-                        device.setDrumsStyle(value);
-                        device.setDrumsTempo(device.drumsTempo);
-                      });
-                  },
-                ),
+                  }
+                },
               ),
             ),
           ),
@@ -162,22 +162,22 @@ class _DrumEditorState extends State<DrumEditor> {
                 if (result != false) {
                   setState(() {
                     var bpm = 60 / (result / 1000);
-                    bpm = Math.min(Math.max(bpm, 40), 240);
+                    bpm = math.min(math.max(bpm, 40), 240);
                     device.setDrumsTempo(bpm);
                   });
                 }
               },
               elevation: 2.0,
               fillColor: Colors.blue,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(12.0),
+              shape: const CircleBorder(),
+              child: const Padding(
+                padding: EdgeInsets.all(10.0),
                 child: Text(
                   "Tap",
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
               ),
-              padding: EdgeInsets.all(12.0),
-              shape: CircleBorder(),
             ),
           ),
         ],

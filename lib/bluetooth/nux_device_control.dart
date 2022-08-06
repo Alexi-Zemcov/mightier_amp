@@ -80,7 +80,7 @@ class NuxDeviceControl extends ChangeNotifier {
   bool get isConnected => _midiHandler.connectedDevice != null;
 
   //list of all different nux devices
-  List<NuxDevice> _deviceInstances = <NuxDevice>[];
+  final List<NuxDevice> _deviceInstances = <NuxDevice>[];
 
   List<NuxDevice> get deviceList => _deviceInstances;
 
@@ -213,21 +213,21 @@ class NuxDeviceControl extends ChangeNotifier {
       case MidiSetupStatus.deviceFound:
         // check if this is valid nux device
         debugPrint("Devices found ${_midiHandler.nuxDevices}");
-        _midiHandler.nuxDevices.forEach((dev) {
+        for (var dev in _midiHandler.nuxDevices) {
           if (dev.device.type != BluetoothDeviceType.classic) {
             //don't autoconnect on manual scan
             if (!_midiHandler.manualScan) {
               _midiHandler.connectToDevice(dev.device);
             }
           }
-        });
+        }
         break;
       case MidiSetupStatus.deviceConnected:
         clearUndoStack();
 
         //find which device connected
         if (isConnected) {
-          print("${_midiHandler.connectedDevice!.name} connected");
+          debugPrint("${_midiHandler.connectedDevice!.name} connected");
           _device = deviceFromBLEId(_midiHandler.connectedDevice!.name);
 
           updateDiagnosticsData(connected: true);
@@ -249,7 +249,7 @@ class NuxDeviceControl extends ChangeNotifier {
   }
 
   void _onConnect() {
-    print("Device connected");
+    debugPrint("Device connected");
     device.onConnect();
     connectStatus.add(DeviceConnectionState.connectedStart);
     rxSubscription = _midiHandler.registerDataListener(_onDataReceive);
@@ -261,7 +261,7 @@ class NuxDeviceControl extends ChangeNotifier {
     batteryTimer?.cancel();
     rxSubscription?.cancel();
     device.onDisconnect();
-    print("Device disconnected");
+    debugPrint("Device disconnected");
   }
 
   void _onDataReceive(List<int> data) {
@@ -274,7 +274,7 @@ class NuxDeviceControl extends ChangeNotifier {
   }
 
   void requestFirmwareVersion() async {
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     var data = device.communication.createFirmwareMessage();
     if (data.isNotEmpty) {
       _midiHandler.sendData(data);
@@ -291,11 +291,12 @@ class NuxDeviceControl extends ChangeNotifier {
   void onPrimaryDataReady() {
     device.communication.requestSecondaryData();
     if (device.batterySupport) {
-      batteryTimer = Timer.periodic(Duration(seconds: 15), _onBatteryTimer);
+      batteryTimer =
+          Timer.periodic(const Duration(seconds: 15), _onBatteryTimer);
       if (device.presetSaveSupport) _onBatteryTimer(null);
     }
 
-    print("Primary data received");
+    debugPrint("Primary data received");
     onPresetsReady();
   }
 
@@ -307,12 +308,12 @@ class NuxDeviceControl extends ChangeNotifier {
     _onBatteryTimer(null);
     device.sendAmpLevel();
     connectStatus.add(DeviceConnectionState.configReceived);
-    print("Device connection complete");
+    debugPrint("Device connection complete");
   }
 
   //for some reason we should not ask for presets immediately
   void requestPresetDelayed() async {
-    await Future.delayed(Duration(milliseconds: 400));
+    await Future.delayed(const Duration(milliseconds: 400));
     requestPreset(0);
   }
 

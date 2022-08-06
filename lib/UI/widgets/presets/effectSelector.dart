@@ -9,12 +9,12 @@ import 'package:mighty_plug_manager/platform/simpleSharedPrefs.dart';
 import 'package:tinycolor2/tinycolor2.dart';
 import 'package:undo/undo.dart';
 
-import '../../../bluetooth/NuxDeviceControl.dart';
 import '../../../bluetooth/devices/NuxDevice.dart';
 import '../../../bluetooth/devices/effects/Processor.dart';
 import '../../../bluetooth/devices/presets/Preset.dart';
+import '../../../bluetooth/nux_device_control.dart';
 import '../customPopupMenu.dart' as custom;
-import 'effectEditor.dart';
+import 'effect_editor.dart';
 
 class EffectSelector extends StatefulWidget {
   final Preset preset;
@@ -153,7 +153,7 @@ class _EffectSelectorState extends State<EffectSelector> {
               style:
                   TextStyle(color: _effectColor, fontWeight: FontWeight.bold),
             ),
-            if (_effectItems.length > 1) SizedBox(height: 1, width: 8),
+            if (_effectItems.length > 1) const SizedBox(height: 1, width: 8),
             if (_effectItems.length > 1) Text(_selectedEffectName)
           ],
         ),
@@ -189,7 +189,7 @@ class _EffectSelectorState extends State<EffectSelector> {
                     (oldVal) => _preset.swapProcessorSlots(from, to, true)));
               });
             }),
-        SizedBox(
+        const SizedBox(
           height: 8,
         ),
         Row(
@@ -198,13 +198,13 @@ class _EffectSelectorState extends State<EffectSelector> {
           children: [
             if (_selectedSlot != 0 && _effectItems.length > 1)
               custom.PopupMenuButton(
-                child: effectSelectButton,
                 itemBuilder: (context) => _effectItems,
                 onSelected: setSelectedEffect,
+                child: effectSelectButton,
               )
             else
               effectSelectButton,
-            SizedBox(
+            const SizedBox(
                 width: 1,
                 height: 48), //used to even out sizes when switch is not visible
             Row(

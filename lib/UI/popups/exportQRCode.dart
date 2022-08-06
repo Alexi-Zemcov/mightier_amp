@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mighty_plug_manager/bluetooth/NuxDeviceControl.dart';
+import 'package:mighty_plug_manager/bluetooth/nux_device_control.dart';
 import 'package:mighty_plug_manager/platform/fileSaver.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
